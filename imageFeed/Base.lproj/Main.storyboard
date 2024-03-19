@@ -21,36 +21,73 @@
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                                 <color key="backgroundColor" name="YP Black"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ImagesListCell" rowHeight="233" id="wmk-ml-xcd" customClass="ImagesListCell" customModule="imageFeed" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ImagesListCell" rowHeight="233" id="wmk-ml-xcd" customClass="ImagesListCell" customModule="imageFeed" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="393" height="233"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="wmk-ml-xcd" id="Y4d-19-n5K">
                                             <rect key="frame" x="0.0" y="0.0" width="393" height="233"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="1FP-26-x0d">
-                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="233"/>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="2" translatesAutoresizingMaskIntoConstraints="NO" id="1FP-26-x0d" userLabel="Cell Image">
+                                                    <rect key="frame" x="16" y="4" width="361" height="225"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                            <integer key="value" value="16"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                    </userDefinedRuntimeAttributes>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GAA-YN-y2T">
-                                                    <rect key="frame" x="20" y="201" width="42" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="liX-Mj-LzL" userLabel="Gradient Layer View">
+                                                    <rect key="frame" x="16" y="205" width="361" height="24"/>
+                                                </view>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GAA-YN-y2T" userLabel="Date Label">
+                                                    <rect key="frame" x="20" y="201" width="33" height="16"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <color key="textColor" name="YP White (iOS)"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LaH-0s-hQH" userLabel="Like Button">
+                                                    <rect key="frame" x="333" y="4" width="44" height="44"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="44" id="78P-qW-iiU"/>
+                                                        <constraint firstAttribute="width" constant="44" id="EWm-kP-dAI"/>
+                                                    </constraints>
+                                                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                    <state key="normal" title="" image="favorites_button_off">
+                                                        <preferredSymbolConfiguration key="preferredSymbolConfiguration"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="likeButtonClicked" destination="wmk-ml-xcd" eventType="touchUpInside" id="0hX-nr-Kdy"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="1FP-26-x0d" secondAttribute="trailing" id="Vq7-4K-vya"/>
-                                                <constraint firstItem="1FP-26-x0d" firstAttribute="leading" secondItem="Y4d-19-n5K" secondAttribute="leading" id="Xbq-X3-Lo0"/>
-                                                <constraint firstItem="1FP-26-x0d" firstAttribute="top" secondItem="Y4d-19-n5K" secondAttribute="top" id="fFi-gj-yzd"/>
-                                                <constraint firstAttribute="bottom" secondItem="1FP-26-x0d" secondAttribute="bottom" id="rAO-BN-sM3"/>
+                                                <constraint firstItem="LaH-0s-hQH" firstAttribute="top" secondItem="1FP-26-x0d" secondAttribute="top" id="0HG-1t-VjY"/>
+                                                <constraint firstItem="1FP-26-x0d" firstAttribute="bottom" secondItem="GAA-YN-y2T" secondAttribute="bottom" constant="8" id="Gag-Zo-Wgg"/>
+                                                <constraint firstItem="liX-Mj-LzL" firstAttribute="trailing" secondItem="1FP-26-x0d" secondAttribute="trailing" id="OVI-Q3-ye1"/>
+                                                <constraint firstItem="GAA-YN-y2T" firstAttribute="leading" secondItem="1FP-26-x0d" secondAttribute="leading" constant="8" id="Qij-RU-HPp"/>
+                                                <constraint firstItem="GAA-YN-y2T" firstAttribute="trailing" secondItem="1FP-26-x0d" secondAttribute="trailing" constant="-8" id="SOU-uS-EBV"/>
+                                                <constraint firstAttribute="trailing" secondItem="1FP-26-x0d" secondAttribute="trailing" constant="16" id="Vq7-4K-vya"/>
+                                                <constraint firstItem="1FP-26-x0d" firstAttribute="leading" secondItem="Y4d-19-n5K" secondAttribute="leading" constant="16" id="Xbq-X3-Lo0"/>
+                                                <constraint firstItem="LaH-0s-hQH" firstAttribute="trailing" secondItem="1FP-26-x0d" secondAttribute="trailing" id="d66-F8-u8E"/>
+                                                <constraint firstItem="1FP-26-x0d" firstAttribute="top" secondItem="Y4d-19-n5K" secondAttribute="top" constant="4" id="fFi-gj-yzd"/>
+                                                <constraint firstItem="liX-Mj-LzL" firstAttribute="bottom" secondItem="1FP-26-x0d" secondAttribute="bottom" id="gDR-zt-qob"/>
+                                                <constraint firstAttribute="bottom" secondItem="1FP-26-x0d" secondAttribute="bottom" constant="4" id="rAO-BN-sM3"/>
+                                                <constraint firstItem="liX-Mj-LzL" firstAttribute="top" secondItem="GAA-YN-y2T" secondAttribute="top" id="wRu-CF-rIb"/>
+                                                <constraint firstItem="liX-Mj-LzL" firstAttribute="leading" secondItem="1FP-26-x0d" secondAttribute="leading" id="yiZ-Jt-7y0"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" name="YP Black (iOS)"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
                                                 <integer key="value" value="16"/>
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <outlet property="cellImage" destination="1FP-26-x0d" id="cpc-cm-HWb"/>
+                                            <outlet property="dateLabel" destination="GAA-YN-y2T" id="ZVj-L4-4aY"/>
+                                            <outlet property="gradientLayerView" destination="liX-Mj-LzL" id="hem-qT-quE"/>
+                                            <outlet property="likeButton" destination="LaH-0s-hQH" id="LCC-8b-Hhk"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
@@ -78,9 +115,16 @@
         </scene>
     </scenes>
     <resources>
-        <image name="0" width="1600" height="1059"/>
+        <image name="2" width="1280" height="960"/>
+        <image name="favorites_button_off" width="42" height="42"/>
         <namedColor name="YP Black">
             <color red="0.10199999809265137" green="0.10599999874830246" blue="0.13300000131130219" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="YP Black (iOS)">
+            <color red="0.10199999809265137" green="0.10599999874830246" blue="0.13300000131130219" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="YP White (iOS)">
+            <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>
