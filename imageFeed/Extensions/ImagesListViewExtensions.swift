@@ -3,11 +3,20 @@ import UIKit
 extension imagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         guard let image = UIImage(named: photoNames[indexPath.row]) else {
+            imageFeedLog.logError("Couldn't find the image")
+            
             return 0
         }
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
         let imageWidth = image.size.width
+        
+        guard imageWidth != 0 else {
+            imageFeedLog.logError("Error: The width of the image is equal to zero")
+            
+            return 0
+        }
+        
         let scale = imageViewWidth / imageWidth
 
         let heightForRow = image.size.height * scale + imageInsets.top + imageInsets.bottom
@@ -61,7 +70,7 @@ extension imagesListViewController {
     }
     
     func cellFavoriteImage(index: Int) -> UIImage? {
-        let isEven = (index + 1) % 2 == 0
+        let isEven = index % 2 == 0
         let buttonImage = isEven ? UIImage(named: "favorites_button_on") : UIImage(named: "favorites_button_off")
         
         return buttonImage
