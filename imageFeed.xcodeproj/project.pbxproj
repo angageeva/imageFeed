@@ -18,6 +18,7 @@
 		589A2E532B7BA93F0046E06C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 589A2E522B7BA93F0046E06C /* Assets.xcassets */; };
 		589A2E562B7BA93F0046E06C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 589A2E542B7BA93F0046E06C /* LaunchScreen.storyboard */; };
 		58CF4F882B8513AA00E6A49E /* ImagesListViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58CF4F872B8513AA00E6A49E /* ImagesListViewExtensions.swift */; };
+		58F21BDE2BB6C06D00B33671 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F21BDD2BB6C06D00B33671 /* ProfileViewController.swift */; };
 		58F6B8FA2BAC49D900A2A120 /* ImageFeedLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58F6B8F92BAC49D900A2A120 /* ImageFeedLog.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +36,7 @@
 		589A2E552B7BA93F0046E06C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		589A2E572B7BA93F0046E06C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		58CF4F872B8513AA00E6A49E /* ImagesListViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListViewExtensions.swift; sourceTree = "<group>"; };
+		58F21BDD2BB6C06D00B33671 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		58F6B8F92BAC49D900A2A120 /* ImageFeedLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFeedLog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -87,6 +89,7 @@
 		589A2E482B7BA93C0046E06C /* imageFeed */ = {
 			isa = PBXGroup;
 			children = (
+				58F21BDD2BB6C06D00B33671 /* ProfileViewController.swift */,
 				58CF4F8B2B851A2700E6A49E /* ImagesList */,
 				58E233C92B7F5C5F00785F68 /* Resources */,
 				58CF4F862B8512CC00E6A49E /* Extensions */,
@@ -204,6 +207,7 @@
 				582743BA2B90A7BF0052667F /* ImagesListCell.swift in Sources */,
 				589A2E4A2B7BA93C0046E06C /* AppDelegate.swift in Sources */,
 				58CF4F882B8513AA00E6A49E /* ImagesListViewExtensions.swift in Sources */,
+				58F21BDE2BB6C06D00B33671 /* ProfileViewController.swift in Sources */,
 				589A2E4C2B7BA93C0046E06C /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
