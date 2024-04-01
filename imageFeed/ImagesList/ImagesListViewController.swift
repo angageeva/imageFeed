@@ -1,6 +1,6 @@
 import UIKit
 
-final class imagesListViewController: UIViewController {
+final class ImagesListViewController: UIViewController {
     let imageFeedLog = ImageFeedLog()
     let photoNames: [String] = Array(0..<20).map{ "\($0)" }
 
@@ -9,6 +9,23 @@ final class imagesListViewController: UIViewController {
     }
 
     @IBOutlet private var tableView: UITableView!
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ShowSingleImage" {
+            guard
+                let viewController = segue.destination as? SingleImageViewController,
+                let indexPath = sender as? IndexPath
+            else {
+                assertionFailure("Invalid segue destination")
+                return
+            }
+
+            let image = UIImage(named: photoNames[indexPath.row])
+            viewController.image = image
+        } else {
+            super.prepare(for: segue, sender: sender)
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()

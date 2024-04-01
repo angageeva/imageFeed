@@ -1,6 +1,6 @@
 import UIKit
 
-extension imagesListViewController: UITableViewDelegate {
+extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         guard let image = UIImage(named: photoNames[indexPath.row]) else {
             imageFeedLog.logError("Couldn't find the image")
@@ -23,9 +23,13 @@ extension imagesListViewController: UITableViewDelegate {
 
         return heightForRow
     }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "ShowSingleImage", sender: indexPath)
+    }
 }
 
-extension imagesListViewController: UITableViewDataSource {
+extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return photoNames.count
     }
@@ -43,7 +47,7 @@ extension imagesListViewController: UITableViewDataSource {
     }
 }
 
-extension imagesListViewController {
+extension ImagesListViewController {
     func getFormattedDate() -> String {
         lazy var dateFormatter: DateFormatter = {
             let formatter = DateFormatter()

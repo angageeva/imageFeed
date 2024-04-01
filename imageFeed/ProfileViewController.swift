@@ -1,4 +1,4 @@
 import Foundation
 import UIKit
 
-class profileViewController: UIViewController {}
+final class ProfileViewController: UIViewController {}
