@@ -24,8 +24,8 @@ extension ImagesListViewController: UITableViewDelegate {
         return heightForRow
     }
     
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "ShowSingleImage", sender: indexPath)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: showSingleImageSegueIdentifier, sender: indexPath) // should we send indexPath as sender?
     }
 }
 

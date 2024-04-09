@@ -1,6 +1,7 @@
 import UIKit
 
 final class ImagesListViewController: UIViewController {
+    let showSingleImageSegueIdentifier = "ShowSingleImage" //private? but extension is located in the other file
     let imageFeedLog = ImageFeedLog()
     let photoNames: [String] = Array(0..<20).map{ "\($0)" }
 
@@ -11,7 +12,7 @@ final class ImagesListViewController: UIViewController {
     @IBOutlet private var tableView: UITableView!
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ShowSingleImage" {
+        if segue.identifier == showSingleImageSegueIdentifier {
             guard
                 let viewController = segue.destination as? SingleImageViewController,
                 let indexPath = sender as? IndexPath
@@ -19,7 +20,6 @@ final class ImagesListViewController: UIViewController {
                 assertionFailure("Invalid segue destination")
                 return
             }
-
             let image = UIImage(named: photoNames[indexPath.row])
             viewController.image = image
         } else {
