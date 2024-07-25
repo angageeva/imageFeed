@@ -1,6 +1,8 @@
 import Foundation
 import os.log
 
+// MARK: - ImageFeedLog
+
 final class ImageFeedLog {
     private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ImageFeed")
 

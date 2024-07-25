@@ -91,8 +91,8 @@
 		589A2E482B7BA93C0046E06C /* imageFeed */ = {
 			isa = PBXGroup;
 			children = (
-				58F21BDF2BB6E26A00B33671 /* SingleImageViewController.swift */,
-				58F21BDD2BB6C06D00B33671 /* ProfileViewController.swift */,
+				58DBA3872C523A0A00B7C6F2 /* SingleImage */,
+				58DBA3862C5239F500B7C6F2 /* Profile */,
 				58CF4F8B2B851A2700E6A49E /* ImagesList */,
 				58E233C92B7F5C5F00785F68 /* Resources */,
 				58CF4F862B8512CC00E6A49E /* Extensions */,
@@ -118,6 +118,22 @@
 				582743B92B90A7BF0052667F /* ImagesListCell.swift */,
 			);
 			path = ImagesList;
+			sourceTree = "<group>";
+		};
+		58DBA3862C5239F500B7C6F2 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				58F21BDD2BB6C06D00B33671 /* ProfileViewController.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		58DBA3872C523A0A00B7C6F2 /* SingleImage */ = {
+			isa = PBXGroup;
+			children = (
+				58F21BDF2BB6E26A00B33671 /* SingleImageViewController.swift */,
+			);
+			path = SingleImage;
 			sourceTree = "<group>";
 		};
 		58E233C92B7F5C5F00785F68 /* Resources */ = {

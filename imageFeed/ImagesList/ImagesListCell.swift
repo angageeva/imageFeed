@@ -1,6 +1,11 @@
 import UIKit
 
+// MARK: - ImagesListCell
+
 final class ImagesListCell: UITableViewCell {
+    
+    // MARK: - Properties
+    
     static let reuseIdentifier = "ImagesListCell"
     var gradientLayer: CAGradientLayer?
 
@@ -11,6 +16,8 @@ final class ImagesListCell: UITableViewCell {
 
     static private let cornerRadius = 16.0
 
+    // MARK: - Public methods
+    
     override func layoutSubviews() {
         super.layoutSubviews()
 
@@ -18,6 +25,8 @@ final class ImagesListCell: UITableViewCell {
     }
     
     @IBAction func likeButtonClicked(){}
+    
+    // MARK: - Private methods
     
     private func resizeGradientLayerView() {
         gradientLayer?.frame = gradientLayerView.bounds
