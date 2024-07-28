@@ -2,18 +2,25 @@ import UIKit
 
 //MARK: - AuthViewController
 
+protocol AuthViewControllerDelegate: AnyObject {
+    func didAuthenticate()
+}
+
 final class AuthViewController: UIViewController {
-    
+
     // MARK: - Properties
-    
+
     private let showWebViewIdentifier = "ShowWebView"
-    private let oauth2Service = OAuth2Service.shared
+    private let oAuth2Service = OAuth2Service.shared
+    private var oAuthTokenStorage = OAuth2TokenStorage()
+
+    weak var delegate: AuthViewControllerDelegate?
     
     // MARK: - Lifecyclemethods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         configureBackButton()
     }
     
@@ -42,12 +49,27 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewControllerDelegate {
     func webViewViewController(_ vc: WebViewController, didAuthenticateWithCode code: String) {
-        //todo
+        oAuth2Service.fetchOAuthToken(code: code) { result in
+            switch result {
+            case .success(let data):
+                let decoder = JSONDecoder()
+                do {
+                    let tokenResponse = try decoder.decode(OAuthTokenResponseBody.self, from: data)
+
+                    self.oAuthTokenStorage.token = tokenResponse.accessToken
+                    self.dismiss(animated: true) {
+                        self.delegate?.didAuthenticate()
+                    }
+                } catch {
+                    print("Failed to decode JSON: \(error)")
+                }
+            case .failure(let error):
+                print("Error from UNSPLASH: \(error)")
+            }
+        }
     }
     
     func webViewViewControllerDidCancel(_ vc: WebViewController) {
         dismiss(animated: true)
     }
-    
-    
 }

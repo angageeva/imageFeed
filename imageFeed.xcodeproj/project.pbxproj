@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5819A8812C565F6400453710 /* URLSession+data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5819A8802C565F6400453710 /* URLSession+data.swift */; };
+		5819A8842C5666C600453710 /* OAuthTokenResponseBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5819A8832C5666C600453710 /* OAuthTokenResponseBody.swift */; };
+		5819A8862C566A3900453710 /* OAuth2TokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5819A8852C566A3900453710 /* OAuth2TokenStorage.swift */; };
+		5819A8882C56971E00453710 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5819A8872C56971E00453710 /* SplashViewController.swift */; };
 		582743BA2B90A7BF0052667F /* ImagesListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582743B92B90A7BF0052667F /* ImagesListCell.swift */; };
 		58285B022C54021B00E812FC /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58285B012C54021B00E812FC /* WebViewController.swift */; };
 		583A52F72B8E46BD007C3F17 /* SF-Pro.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 583A52F52B8E46BD007C3F17 /* SF-Pro.ttf */; };
@@ -28,6 +32,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5819A8802C565F6400453710 /* URLSession+data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+data.swift"; sourceTree = "<group>"; };
+		5819A8832C5666C600453710 /* OAuthTokenResponseBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthTokenResponseBody.swift; sourceTree = "<group>"; };
+		5819A8852C566A3900453710 /* OAuth2TokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2TokenStorage.swift; sourceTree = "<group>"; };
+		5819A8872C56971E00453710 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		582743B92B90A7BF0052667F /* ImagesListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCell.swift; sourceTree = "<group>"; };
 		58285B012C54021B00E812FC /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		583A52F52B8E46BD007C3F17 /* SF-Pro.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro.ttf"; sourceTree = "<group>"; };
@@ -61,6 +69,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5819A8822C56669D00453710 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				5819A8832C5666C600453710 /* OAuthTokenResponseBody.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		5819A88A2C56982200453710 /* SplashView */ = {
+			isa = PBXGroup;
+			children = (
+				5819A8872C56971E00453710 /* SplashViewController.swift */,
+			);
+			path = SplashView;
+			sourceTree = "<group>";
+		};
 		583A52F42B8E44C3007C3F17 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -82,9 +106,11 @@
 		586574752C53E7B30094593F /* Auth */ = {
 			isa = PBXGroup;
 			children = (
+				586574702C53C4B30094593F /* Constants.swift */,
 				586574762C53E7D90094593F /* AuthViewController.swift */,
 				58285B012C54021B00E812FC /* WebViewController.swift */,
 				5897DE302C56392400F814E1 /* OAuth2Service.swift */,
+				5819A8852C566A3900453710 /* OAuth2TokenStorage.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -109,6 +135,8 @@
 		589A2E482B7BA93C0046E06C /* imageFeed */ = {
 			isa = PBXGroup;
 			children = (
+				5819A88A2C56982200453710 /* SplashView */,
+				5819A8822C56669D00453710 /* Models */,
 				586574752C53E7B30094593F /* Auth */,
 				58DBA3872C523A0A00B7C6F2 /* SingleImage */,
 				58DBA3862C5239F500B7C6F2 /* Profile */,
@@ -116,7 +144,6 @@
 				58E233C92B7F5C5F00785F68 /* Resources */,
 				58CF4F862B8512CC00E6A49E /* Extensions */,
 				589A2E492B7BA93C0046E06C /* AppDelegate.swift */,
-				586574702C53C4B30094593F /* Constants.swift */,
 				589A2E4B2B7BA93C0046E06C /* SceneDelegate.swift */,
 				589A2E4F2B7BA93C0046E06C /* Main.storyboard */,
 			);
@@ -127,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				58CF4F872B8513AA00E6A49E /* ImagesListViewExtensions.swift */,
+				5819A8802C565F6400453710 /* URLSession+data.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -240,8 +268,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5819A8812C565F6400453710 /* URLSession+data.swift in Sources */,
 				586574772C53E7D90094593F /* AuthViewController.swift in Sources */,
 				589A2E4E2B7BA93C0046E06C /* ImagesListViewController.swift in Sources */,
+				5819A8882C56971E00453710 /* SplashViewController.swift in Sources */,
 				5897DE312C56392400F814E1 /* OAuth2Service.swift in Sources */,
 				58F21BE02BB6E26A00B33671 /* SingleImageViewController.swift in Sources */,
 				58F6B8FA2BAC49D900A2A120 /* ImageFeedLog.swift in Sources */,
@@ -251,8 +281,10 @@
 				589A2E4A2B7BA93C0046E06C /* AppDelegate.swift in Sources */,
 				58CF4F882B8513AA00E6A49E /* ImagesListViewExtensions.swift in Sources */,
 				58F21BDE2BB6C06D00B33671 /* ProfileViewController.swift in Sources */,
+				5819A8862C566A3900453710 /* OAuth2TokenStorage.swift in Sources */,
 				58285B022C54021B00E812FC /* WebViewController.swift in Sources */,
 				589A2E4C2B7BA93C0046E06C /* SceneDelegate.swift in Sources */,
+				5819A8842C5666C600453710 /* OAuthTokenResponseBody.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -405,7 +437,6 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -438,7 +469,6 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

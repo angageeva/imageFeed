@@ -19,11 +19,15 @@ final class WebViewController: UIViewController {
     
     static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
     // MARK: - Lifecyclemethods
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         webView.addObserver( //перенести во viewWillAppear и добавить отписку
             self,
             forKeyPath: #keyPath(WKWebView.estimatedProgress),
@@ -35,8 +39,6 @@ final class WebViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        var urlComponents = URLComponents(string: WebViewController.unsplashAuthorizeURLString)!
-
         loadAuthView()
     }
     
@@ -58,7 +60,7 @@ final class WebViewController: UIViewController {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
-
+    
     
     // MARK: - Private methods
     
@@ -67,7 +69,6 @@ final class WebViewController: UIViewController {
             print("Can't initial the urlComponents!")
             return
         }
- 
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: Constants.accessKey),
             URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
@@ -79,10 +80,9 @@ final class WebViewController: UIViewController {
             print("Can't form the url!")
             return
         }
-        
         let request = URLRequest(url: url)
+
         webView.load(request)
-        
         webView.navigationDelegate = self
     }
     
@@ -114,6 +114,7 @@ extension WebViewController: WKNavigationDelegate {
     ) {
         if let code = code(from: navigationAction) {
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
+
             decisionHandler(.cancel)
         } else {
             decisionHandler(.allow)
