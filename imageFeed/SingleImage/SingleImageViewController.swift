@@ -1,6 +1,6 @@
 import UIKit
 
-// MARK: SingleImageViewController
+// MARK: - SingleImageViewController
 
 final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
 
