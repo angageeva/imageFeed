@@ -15,12 +15,13 @@ final class WebViewController: UIViewController {
     @IBOutlet weak private var webView: WKWebView!
     @IBOutlet weak private var progressView: UIProgressView!
     
-    weak var delegate: WebViewControllerDelegate?
-    
+    let unsplashOAuthNativeURL = "/oauth/authorize/native"
     static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
     
+    weak var delegate: WebViewControllerDelegate?
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
+        return .darkContent
     }
     
     // MARK: - Lifecyclemethods
@@ -28,7 +29,7 @@ final class WebViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        webView.addObserver( //перенести во viewWillAppear и добавить отписку
+        webView.addObserver(
             self,
             forKeyPath: #keyPath(WKWebView.estimatedProgress),
             options: .new,
@@ -65,9 +66,19 @@ final class WebViewController: UIViewController {
     // MARK: - Private methods
     
     private func loadAuthView() {
+        guard let request = buildAuthorizeURL() else {
+            print("Can't form the authorize url!")
+            return
+        }
+
+        webView.load(request)
+        webView.navigationDelegate = self
+    }
+    
+    private func buildAuthorizeURL() -> URLRequest? {
         guard var urlComponents = URLComponents(string: WebViewController.unsplashAuthorizeURLString) else {
             print("Can't initial the urlComponents!")
-            return
+            return nil
         }
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: Constants.accessKey),
@@ -78,19 +89,16 @@ final class WebViewController: UIViewController {
         
         guard let url = urlComponents.url else {
             print("Can't form the url!")
-            return
+            return nil
         }
-        let request = URLRequest(url: url)
-
-        webView.load(request)
-        webView.navigationDelegate = self
+        return URLRequest(url: url)
     }
     
     private func code(from navigationAction: WKNavigationAction) -> String? {
         if
             let url = navigationAction.request.url,
             let urlComponents = URLComponents(string: url.absoluteString),
-            urlComponents.path == "/oauth/authorize/native",
+            urlComponents.path == unsplashOAuthNativeURL,
             let items = urlComponents.queryItems,
             let codeItem = items.first(where: {$0.name == "code"})
         {

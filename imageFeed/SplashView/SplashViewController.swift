@@ -6,8 +6,12 @@ final class SplashViewController: UIViewController {
     
     // MARK: - Properties
     
-    private let oAuth2TokenStorage = OAuth2TokenStorage()
+    private let oAuthTokenStorage = OAuth2TokenStorage()
     private let showAuthenticationScreenSegueIdentifier = "showAuthenticationScreenSegueIdentifier"
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     // MARK: - Public methods
     
@@ -17,11 +21,26 @@ final class SplashViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if oAuth2TokenStorage.token != nil {
+        if oAuthTokenStorage.token != nil {
             switchToBarController()
         } else {
-            performSegue(withIdentifier: "showAuthenticationScreenSegueIdentifier", sender: nil)
+            performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
         }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == showAuthenticationScreenSegueIdentifier {
+            guard
+                let navigationController = segue.destination as? UINavigationController,
+                let viewController = navigationController.viewControllers[0] as? AuthViewController
+            else {
+                assertionFailure("Failed to prepare for \(showAuthenticationScreenSegueIdentifier)")
+                return
+            }
+            viewController.delegate = self
+        } else {
+            super.prepare(for: segue, sender: sender)
+           }
     }
     
     // MARK: -  Private methods
@@ -36,24 +55,9 @@ final class SplashViewController: UIViewController {
 }
 
 extension SplashViewController: AuthViewControllerDelegate {
-    func didAuthenticate() {
-        switchToBarController()
-    }
-}
+    func didAuthenticate(accessToken: String) {
+        oAuthTokenStorage.token = accessToken
 
-extension SplashViewController {
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showAuthenticationScreenSegueIdentifier {
-            guard
-                let navigationController = segue.destination as? UINavigationController,
-                let viewController = navigationController.viewControllers[0] as? AuthViewController
-            else {
-                assertionFailure("Failed to prepare for \(showAuthenticationScreenSegueIdentifier)")
-                return
-            }
-            viewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
-           }
+        switchToBarController()
     }
 }

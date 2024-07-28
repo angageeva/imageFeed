@@ -4,7 +4,7 @@ import Foundation
 
 final class OAuth2Service {
     // MARK: - Properties
-    
+
     static let shared = OAuth2Service()
     
     // MARK: - Public methods
@@ -25,7 +25,7 @@ final class OAuth2Service {
     
     private func buildOAuthTokenRequest(code: String) -> URLRequest? {
         var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token")!
-        
+
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: Constants.accessKey),
             URLQueryItem(name: "client_secret", value: Constants.secretKey),
@@ -40,7 +40,7 @@ final class OAuth2Service {
         }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        
+
         return request
     }
 }

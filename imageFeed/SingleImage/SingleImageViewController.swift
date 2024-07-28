@@ -13,6 +13,10 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
             setImage(image: image)
         }
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
 
     @IBOutlet weak private var imageView: UIImageView!
     @IBOutlet weak private var scrollView: UIScrollView!

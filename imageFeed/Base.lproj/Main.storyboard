@@ -283,7 +283,7 @@
                                 <color key="tintColor" name="YP Black (iOS)"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title=" Войти">
-                                    <fontDescription key="titleFontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
+                                    <fontDescription key="titleFontDescription" type="boldSystem" pointSize="17"/>
                                 </buttonConfiguration>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -308,6 +308,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="vN8-eg-4S6"/>
+                    <connections>
+                        <outlet property="logButton" destination="LYt-i7-c4i" id="9qw-Sx-Q6u"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BUT-cS-CAf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

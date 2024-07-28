@@ -3,7 +3,7 @@ import UIKit
 //MARK: - AuthViewController
 
 protocol AuthViewControllerDelegate: AnyObject {
-    func didAuthenticate()
+    func didAuthenticate(accessToken: String)
 }
 
 final class AuthViewController: UIViewController {
@@ -12,15 +12,21 @@ final class AuthViewController: UIViewController {
 
     private let showWebViewIdentifier = "ShowWebView"
     private let oAuth2Service = OAuth2Service.shared
-    private var oAuthTokenStorage = OAuth2TokenStorage()
 
     weak var delegate: AuthViewControllerDelegate?
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
+    @IBOutlet private weak var logButton: UIButton!
     
     // MARK: - Lifecyclemethods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        settingLogButton()
         configureBackButton()
     }
     
@@ -45,6 +51,10 @@ final class AuthViewController: UIViewController {
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem?.tintColor = UIColor(named: "YP Black (iOS)")
     }
+    
+    private func settingLogButton() {
+        logButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
+    }
 }
 
 extension AuthViewController: WebViewControllerDelegate {
@@ -56,9 +66,8 @@ extension AuthViewController: WebViewControllerDelegate {
                 do {
                     let tokenResponse = try decoder.decode(OAuthTokenResponseBody.self, from: data)
 
-                    self.oAuthTokenStorage.token = tokenResponse.accessToken
                     self.dismiss(animated: true) {
-                        self.delegate?.didAuthenticate()
+                        self.delegate?.didAuthenticate(accessToken: tokenResponse.accessToken)
                     }
                 } catch {
                     print("Failed to decode JSON: \(error)")

@@ -48,18 +48,6 @@ extension ImagesListViewController: UITableViewDataSource {
 }
 
 extension ImagesListViewController {
-    func getFormattedDate() -> String {
-        lazy var dateFormatter: DateFormatter = {
-            let formatter = DateFormatter()
-
-            formatter.dateStyle = .long
-            formatter.timeStyle = .none
-
-            return formatter
-        }()
-        return dateFormatter.string(from: Date())
-    }
-
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         guard let image = UIImage(named: "\(indexPath.row)") else { return }
 
