@@ -1,11 +1,6 @@
 {
   "images" : [
     {
-      "filename" : "No Active.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
       "filename" : "No Active@2x.png",
       "idiom" : "universal",
       "scale" : "2x"

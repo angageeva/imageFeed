@@ -55,9 +55,7 @@ final class SplashViewController: UIViewController {
 }
 
 extension SplashViewController: AuthViewControllerDelegate {
-    func didAuthenticate(accessToken: String) {
-        oAuthTokenStorage.token = accessToken
-
+    func didAuthenticate() {
         switchToBarController()
     }
 }

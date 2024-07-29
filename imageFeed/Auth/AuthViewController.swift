@@ -3,29 +3,30 @@ import UIKit
 //MARK: - AuthViewController
 
 protocol AuthViewControllerDelegate: AnyObject {
-    func didAuthenticate(accessToken: String)
+    func didAuthenticate()
 }
 
 final class AuthViewController: UIViewController {
 
     // MARK: - Properties
 
+    private let oAuthTokenStorage = OAuth2TokenStorage()
     private let showWebViewIdentifier = "ShowWebView"
     private let oAuth2Service = OAuth2Service.shared
 
     weak var delegate: AuthViewControllerDelegate?
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-    
+
     @IBOutlet private weak var logButton: UIButton!
-    
+
     // MARK: - Lifecyclemethods
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         settingLogButton()
         configureBackButton()
     }
@@ -42,9 +43,9 @@ final class AuthViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
         }
     }
-    
+
     // MARK: - Private methods
-    
+
     private func configureBackButton() {
         navigationController?.navigationBar.backIndicatorImage = UIImage(named: "nav_back_button")
         navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "nav_back_button")
@@ -59,25 +60,22 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewControllerDelegate {
     func webViewViewController(_ vc: WebViewController, didAuthenticateWithCode code: String) {
-        oAuth2Service.fetchOAuthToken(code: code) { result in
+        oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
             switch result {
-            case .success(let data):
-                let decoder = JSONDecoder()
-                do {
-                    let tokenResponse = try decoder.decode(OAuthTokenResponseBody.self, from: data)
+            case .success(let accessToken):
+                self?.oAuthTokenStorage.token = accessToken
 
-                    self.dismiss(animated: true) {
-                        self.delegate?.didAuthenticate(accessToken: tokenResponse.accessToken)
+                DispatchQueue.main.async {
+                    self?.dismiss(animated: true) {
+                        self?.delegate?.didAuthenticate()
                     }
-                } catch {
-                    print("Failed to decode JSON: \(error)")
                 }
             case .failure(let error):
                 print("Error from UNSPLASH: \(error)")
             }
         }
     }
-    
+
     func webViewViewControllerDidCancel(_ vc: WebViewController) {
         dismiss(animated: true)
     }

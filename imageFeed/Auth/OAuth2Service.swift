@@ -2,6 +2,10 @@ import Foundation
 
 //MARK: - OAuth2Service
 
+enum OAuth2Error: Error {
+    case noData
+}
+
 final class OAuth2Service {
     // MARK: - Properties
 
@@ -9,15 +13,34 @@ final class OAuth2Service {
     
     // MARK: - Public methods
     
-    func fetchOAuthToken(code: String, completion: @escaping (Result<Data, Error>) -> Void) {
-        guard let oAuthTokenRequest = buildOAuthTokenRequest(code: code) else {
-            print("Can't build the request!")
-            return
+    func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+            guard let oAuthTokenRequest = buildOAuthTokenRequest(code: code) else {
+                print("Can't build the request!")
+                return
+            }
+            let urlSessionTask = URLSession.shared.dataTask(with: oAuthTokenRequest) { data, response, error in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+                guard let data = data else {
+                    completion(.failure(OAuth2Error.noData))
+                    return
+                }
+                
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                
+                do {
+                    let tokenResponse = try decoder.decode(OAuthTokenResponseBody.self, from: data)
+                    completion(.success(tokenResponse.accessToken))
+                } catch {
+                    completion(.failure(error))
+                }
+            }
+            
+            urlSessionTask.resume()
         }
-        let urlSessionTask = URLSession.shared.data(for: oAuthTokenRequest, completion: completion)
-
-        urlSessionTask.resume()
-    }
     
     // MARK: - Private methods
     

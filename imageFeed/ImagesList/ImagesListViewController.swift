@@ -23,7 +23,7 @@ final class ImagesListViewController: UIViewController {
     }()
 
     func getFormattedDate() -> String {
-        return dateFormatter.string(from: Date())
+        dateFormatter.string(from: Date())
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {

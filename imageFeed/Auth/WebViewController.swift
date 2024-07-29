@@ -15,15 +15,15 @@ final class WebViewController: UIViewController {
     @IBOutlet weak private var webView: WKWebView!
     @IBOutlet weak private var progressView: UIProgressView!
     
-    let unsplashOAuthNativeURL = "/oauth/authorize/native"
-    static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
-    
+    private let unsplashOAuthNativeURL = "/oauth/authorize/native"
+    private static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+
     weak var delegate: WebViewControllerDelegate?
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .darkContent
     }
-    
+
     // MARK: - Lifecyclemethods
     
     override func viewWillAppear(_ animated: Bool) {
