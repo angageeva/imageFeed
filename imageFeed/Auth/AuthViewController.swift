@@ -1,4 +1,5 @@
 import UIKit
+import ProgressHUD
 
 //MARK: - AuthViewController
 
@@ -64,7 +65,7 @@ extension AuthViewController: WebViewControllerDelegate {
             switch result {
             case .success(let accessToken):
                 self?.oAuthTokenStorage.token = accessToken
-
+                
                 DispatchQueue.main.async {
                     self?.dismiss(animated: true) {
                         self?.delegate?.didAuthenticate()
@@ -75,7 +76,7 @@ extension AuthViewController: WebViewControllerDelegate {
             }
         }
     }
-
+    
     func webViewViewControllerDidCancel(_ vc: WebViewController) {
         dismiss(animated: true)
     }
