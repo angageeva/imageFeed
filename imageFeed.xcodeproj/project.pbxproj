@@ -20,6 +20,7 @@
 		584B8F6A2C592A430003D5F3 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 584B8F692C592A430003D5F3 /* Kingfisher */; };
 		584B8F6D2C5945E20003D5F3 /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 584B8F6C2C5945E20003D5F3 /* SwiftKeychainWrapper */; };
 		584B8F6F2C594C4E0003D5F3 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584B8F6E2C594C4E0003D5F3 /* TabBarController.swift */; };
+		584B8F722C5987890003D5F3 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584B8F712C5987890003D5F3 /* Profile.swift */; };
 		586574712C53C4B30094593F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586574702C53C4B30094593F /* Constants.swift */; };
 		586574772C53E7D90094593F /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586574762C53E7D90094593F /* AuthViewController.swift */; };
 		5897DE312C56392400F814E1 /* OAuth2Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5897DE302C56392400F814E1 /* OAuth2Service.swift */; };
@@ -50,6 +51,7 @@
 		583A52FA2B8E49F0007C3F17 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		584B8F632C57E5BE0003D5F3 /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
 		584B8F6E2C594C4E0003D5F3 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		584B8F712C5987890003D5F3 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		586574702C53C4B30094593F /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		586574762C53E7D90094593F /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		5897DE302C56392400F814E1 /* OAuth2Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2Service.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				5819A8832C5666C600453710 /* OAuthTokenResponseBody.swift */,
+				584B8F712C5987890003D5F3 /* Profile.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -117,6 +120,14 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		584B8F702C5979660003D5F3 /* TabBar */ = {
+			isa = PBXGroup;
+			children = (
+				584B8F6E2C594C4E0003D5F3 /* TabBarController.swift */,
+			);
+			path = TabBar;
+			sourceTree = "<group>";
+		};
 		586574752C53E7B30094593F /* Auth */ = {
 			isa = PBXGroup;
 			children = (
@@ -132,8 +143,6 @@
 		589A2E3D2B7BA93C0046E06C = {
 			isa = PBXGroup;
 			children = (
-				584B8F6E2C594C4E0003D5F3 /* TabBarController.swift */,
-				584B8F632C57E5BE0003D5F3 /* UIBlockingProgressHUD.swift */,
 				589A2E482B7BA93C0046E06C /* imageFeed */,
 				583A52F92B8E49D0007C3F17 /* Helpers */,
 				589A2E472B7BA93C0046E06C /* Products */,
@@ -151,6 +160,7 @@
 		589A2E482B7BA93C0046E06C /* imageFeed */ = {
 			isa = PBXGroup;
 			children = (
+				584B8F702C5979660003D5F3 /* TabBar */,
 				5819A88A2C56982200453710 /* SplashView */,
 				5819A8822C56669D00453710 /* Models */,
 				586574752C53E7B30094593F /* Auth */,
@@ -161,6 +171,7 @@
 				58CF4F862B8512CC00E6A49E /* Extensions */,
 				589A2E492B7BA93C0046E06C /* AppDelegate.swift */,
 				589A2E4B2B7BA93C0046E06C /* SceneDelegate.swift */,
+				584B8F632C57E5BE0003D5F3 /* UIBlockingProgressHUD.swift */,
 				589A2E4F2B7BA93C0046E06C /* Main.storyboard */,
 			);
 			path = imageFeed;
@@ -315,6 +326,7 @@
 				589A2E4C2B7BA93C0046E06C /* SceneDelegate.swift in Sources */,
 				5897DE382C58DA2400F814E1 /* ProfileImageService.swift in Sources */,
 				584B8F6F2C594C4E0003D5F3 /* TabBarController.swift in Sources */,
+				584B8F722C5987890003D5F3 /* Profile.swift in Sources */,
 				5819A8842C5666C600453710 /* OAuthTokenResponseBody.swift in Sources */,
 				584B8F642C57E5BE0003D5F3 /* UIBlockingProgressHUD.swift in Sources */,
 			);

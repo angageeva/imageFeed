@@ -20,8 +20,6 @@ final class ProfileViewController: UIViewController {
     private let descriptionLabel = UILabel()
     
     private var profileImageServiceObserver: NSObjectProtocol?
-
-    //private var profile: Profile?
     
     // MARK: - Lifecycle methods
     
@@ -35,11 +33,10 @@ final class ProfileViewController: UIViewController {
                 queue: .main
             ) { [weak self] _ in
                 guard let self = self else { return }
-                print("Notification received")
+
                 self.updateAvatar()
             }
         updateAvatar()
-        
         addProfileImage()
         addExitButton()
         addLabels()
@@ -49,14 +46,11 @@ final class ProfileViewController: UIViewController {
         }
     }
     
-    // MARK: private methods
+    // MARK: - Private methods
     
     private func addProfileImage() {
-//        imageView.image = avatarImage
-//        imageView.layer.masksToBounds = true
-//        imageView.layer.cornerRadius = 30
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         //adding subview
         view.addSubview(imageView)
         
@@ -69,7 +63,7 @@ final class ProfileViewController: UIViewController {
     
     private func addLabels() {
         addNameLabel()
-        addnickLabel()
+        addNickLabel()
         addDescriptionLabel()
     }
     
@@ -86,7 +80,7 @@ final class ProfileViewController: UIViewController {
         nameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8).isActive = true
     }
     
-    private func addnickLabel() {
+    private func addNickLabel() {
         // editing nickLabel
         nickLabel.font = UIFont.systemFont(ofSize: 13)
         nickLabel.textColor = .ypGray
@@ -144,6 +138,7 @@ final class ProfileViewController: UIViewController {
         else { return }
         
         let processor = RoundCornerImageProcessor(cornerRadius: 35)
+
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(with: url,
                               placeholder: UIImage(named: "placeholder.png"),
@@ -151,28 +146,11 @@ final class ProfileViewController: UIViewController {
                                 .processor(processor),
                                        ]) { result in
             switch result {
-                // Успешная загрузка
             case .success(_):
                 break
-                // В случае ошибки
             case .failure(let error):
-                print("Can't load the image!: \(error)")
+                print("[ProfileViewController -> updateAvatar]: Error loading image: \(error)")
             }
         }
     }
-    
-//    private func syncProfileData() {
-//        profileService.fetchProfile(oAuthTokenStorage.token!) { [weak self] result in
-//            switch result {
-//            case .success(let profile):
-//                self?.profile = profile
-//
-//                DispatchQueue.main.async {
-//                    self?.addLabels()
-//                }
-//            case .failure(let error):
-//                print("Error: \(error)")
-//            }
-//        }
-//    }
 }

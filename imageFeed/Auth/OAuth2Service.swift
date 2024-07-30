@@ -27,7 +27,7 @@ final class OAuth2Service {
             return
         }
         task?.cancel()
-        lastCode = code
+        self.lastCode = code
         
         guard let oAuthTokenRequest = buildOAuthTokenRequest(code: code) else {
             completion(.failure(OAuth2Error.invalidRequest))
@@ -47,31 +47,9 @@ final class OAuth2Service {
                 completion(.failure(error))
             }
         }
-//        let urlSessionTask = URLSession.shared.dataTask(with: oAuthTokenRequest) { [weak self] data, response, error in
-//            if let error = error {
-//                completion(.failure(error))
-//                return
-//            }
-//            guard let data = data else {
-//                completion(.failure(OAuth2Error.noData))
-//                return
-//            }
-//
-//            let decoder = JSONDecoder()
-//            decoder.keyDecodingStrategy = .convertFromSnakeCase
-//
-//            do {
-//                let tokenResponse = try decoder.decode(OAuthTokenResponseBody.self, from: data)
-//                completion(.success(tokenResponse.accessToken))
-//            } catch {
-//                completion(.failure(error))
-//            }
-//
-//            self?.task = nil
-//            self?.lastCode = nil //probably it is not in main.sync
-//        }
         self.task = urlSessionTask
-        urlSessionTask.resume() //they use task.resume()
+
+        urlSessionTask.resume()
     }
     
     // MARK: - Private methods

@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: ProfileImageService
+
 struct UserResult: Decodable {
     let profileImage: ProfileImage
     
@@ -10,23 +12,26 @@ struct UserResult: Decodable {
 
 final class ProfileImageService {
     
+    // MARK: - Properties
+    
     enum ProfileImageServiceError: Error {
         case invalidToken
         case invalidRequest
         case noData
     }
     
-    private init() {}
-    
     static let shared = ProfileImageService()
-    
     static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     
     private let oAuthTokenStorage = OAuth2TokenStorage()
-    
+
     private var task: URLSessionTask?
     
     private (set) var avatarURL: String?
+    
+    private init() {}
+    
+    // MARK: - Public methods
     
     func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void) {
         if let task = self.task {
@@ -38,7 +43,6 @@ final class ProfileImageService {
             return
         }
         
-        
         guard let profileImageRequest = buildProfileImageRequest(username: username, token: token) else {
             completion(.failure(ProfileImageServiceError.invalidRequest))
             return
@@ -47,8 +51,7 @@ final class ProfileImageService {
         let urlSessionTask = URLSession.shared.objectTask(for: profileImageRequest) { (result: Result<UserResult, Error>) in
             switch result {
             case .success(let profileImageResponse):
-                // we need 'fm' parameter for fetching Unsplash png image to make RoundCornerImageProcessor work correctly
-                let smallProfileImage = (profileImageResponse.profileImage.small + "&fm=png")
+                let smallProfileImage = self.smallProfilePngImage(profileImageResponse.profileImage.small)
                 
                 self.avatarURL = smallProfileImage
                 
@@ -67,44 +70,12 @@ final class ProfileImageService {
                 completion(.failure(error))
             }
         }
-        
-//        let urlSessionTask = URLSession.shared.dataTask(with: profileImageRequest) { data, response, error in
-//            if let error = error {
-//                completion(.failure(error))
-//                return
-//            }
-//            guard let data = data else {
-//                completion(.failure(ProfileImageServiceError.noData))
-//                return
-//            }
-//
-//            let decoder = JSONDecoder()
-//            decoder.keyDecodingStrategy = .convertFromSnakeCase
-//
-//            do {
-//                let profileImageResponse = try decoder.decode(UserResult.self, from: data)
-//                let smallProfileImage = profileImageResponse.profileImage.small
-//
-//                self.avatarURL = smallProfileImage
-//
-//                completion(.success(smallProfileImage))
-//
-//                DispatchQueue.main.async {
-//                    NotificationCenter.default                                    //не уверена, что должно быть так "В методе fetchProfileImageURL сразу после вызова completion добавьте публикацию нотификации:"
-//                        .post(
-//                            name: ProfileImageService.didChangeNotification,
-//                            object: self,
-//                            userInfo: ["URL": smallProfileImage])
-//                }
-//            } catch {
-//                completion(.failure(error))
-//            }
-//
-//            self.task = nil
-//        }
         self.task = urlSessionTask
+
         urlSessionTask.resume()
     }
+    
+    // MARK: - Private methods
     
     private func buildProfileImageRequest(username: String, token: String) -> URLRequest? {
         let url = Constants.defaultBaseURL.appendingPathComponent("/users/\(username)")
@@ -114,5 +85,9 @@ final class ProfileImageService {
 
         return request
     }
-
+    
+    private func smallProfilePngImage(_ profieImageUrl: String) -> String {
+        // we need 'fm' parameter for fetching Unsplash png image to make RoundCornerImageProcessor work correctly
+        return (profieImageUrl + "&fm=png")
+    }
 }

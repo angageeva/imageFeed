@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: ProfileResult
+
 struct ProfileResult: Decodable {
     let username: String
     let firstName: String
@@ -7,15 +9,9 @@ struct ProfileResult: Decodable {
     let bio: String?
 }
 
-struct Profile {
-    let username: String
-    let name: String
-    let loginName: String
-    let bio: String?
-}
-
-
 final class ProfileService {
+    
+    // MARK: - Properties
     
     enum ProfileServiceError: Error {
         case invalidURL
@@ -34,9 +30,11 @@ final class ProfileService {
     
     private(set) var profile: Profile?
     
+    // MARK: - Public methods
+    
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         if let task = self.task {
-            task .cancel()
+            task.cancel()
         }
         
         guard let profileDataRequest = buildProfileDataRequest(token: token) else {
@@ -58,34 +56,12 @@ final class ProfileService {
                 completion(.failure(error))
             }
         }
-        
-//        let urlSessionTask = URLSession.shared.dataTask(with: profileDataRequest) { data, response, error in
-//            if let error = error {
-//                completion(.failure(error))
-//                return
-//            }
-//            guard let data = data else {
-//                completion(.failure(ProfileServiceError.noData))
-//                return
-//            }
-//
-//            let decoder = JSONDecoder()
-//            decoder.keyDecodingStrategy = .convertFromSnakeCase
-//
-//            do {
-//                let profileResponse = try decoder.decode(ProfileResult.self, from: data)
-//                let profile = self.buildProfile(profileResponse: profileResponse)
-//                self.profile = profile
-//                completion(.success(profile))
-//            } catch {
-//                completion(.failure(error))
-//            }
-//
-//            self.task = nil
-//        }
         self.task = urlSessionTask
+
         urlSessionTask.resume()
     }
+    
+    // MARK: - Private methods
 
     private func buildProfileDataRequest(token: String) -> URLRequest? {
         let url = Constants.defaultBaseURL.appendingPathComponent("/me")
@@ -99,10 +75,12 @@ final class ProfileService {
     private func buildProfile(profileResponse: ProfileResult) -> Profile {
         let name = "\(profileResponse.firstName) \(profileResponse.lastName ?? "")".trimmingCharacters(in: .whitespaces)
         let loginName = "@\(profileResponse.username)"
+
         return Profile(
             username: profileResponse.username,
             name: name,
             loginName: loginName,
-            bio: profileResponse.bio)
+            bio: profileResponse.bio
+        )
     }
 }

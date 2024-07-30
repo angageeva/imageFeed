@@ -1,7 +1,12 @@
 import Foundation
 import SwiftKeychainWrapper
 
+// MARK: - OAuth2TokenStorage
+
 final class OAuth2TokenStorage {
+    
+    // MARK: - Properties
+    
     private let keychainStorage = KeychainWrapper.standard
     
     private enum Keys: String {
