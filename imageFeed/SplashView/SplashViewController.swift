@@ -8,6 +8,8 @@ final class SplashViewController: UIViewController {
     
     private let oAuthTokenStorage = OAuth2TokenStorage()
     private let showAuthenticationScreenSegueIdentifier = "showAuthenticationScreenSegueIdentifier"
+    private let profileService = ProfileService.shared
+    private let profileImageService = ProfileImageService.shared
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -21,8 +23,8 @@ final class SplashViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if oAuthTokenStorage.token != nil {
-            switchToBarController()
+        if let token = oAuthTokenStorage.token {
+            fetchProfile(token)
         } else {
             performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
         }
@@ -56,6 +58,37 @@ final class SplashViewController: UIViewController {
 
 extension SplashViewController: AuthViewControllerDelegate {
     func didAuthenticate() {
-        switchToBarController()
+        //vc.dismiss(animated: true) //added dc
+        
+        guard let token = oAuthTokenStorage.token else {
+            return
+        }
+        
+        fetchProfile(token)
+    }
+    
+    private func fetchProfile(_ token: String) {
+        UIBlockingProgressHUD.show()
+        profileService.fetchProfile(token) { [weak self] result in
+            //profileImageService.shared.fetch...
+            UIBlockingProgressHUD.dismiss()
+            
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let profile):
+                DispatchQueue.main.async {
+                    self.switchToBarController()
+                    self.fetchProfileImage(profile.username)
+                }
+            case .failure(let error):
+                    print("Error of fetching the profile: \(error)")
+                break
+            }
+        }
+    }
+    
+    private func fetchProfileImage(_ username: String) {
+        ProfileImageService.shared.fetchProfileImageURL(username: username) {_ in }
     }
 }
