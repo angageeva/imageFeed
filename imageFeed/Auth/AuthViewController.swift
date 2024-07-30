@@ -27,6 +27,8 @@ final class AuthViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setNeedsStatusBarAppearanceUpdate()
 
         settingLogButton()
         configureBackButton()

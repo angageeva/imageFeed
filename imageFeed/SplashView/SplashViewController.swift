@@ -21,32 +21,40 @@ final class SplashViewController: UIViewController {
     
     // MARK: - Lifecycle methods
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setNeedsStatusBarAppearanceUpdate()
+        
+        prepareSplashViewContent()
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         if let token = oAuthTokenStorage.token {
             fetchProfile(token)
         } else {
-            performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
+            segueToAuthViewController()
         }
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showAuthenticationScreenSegueIdentifier {
-            guard
-                let navigationController = segue.destination as? UINavigationController,
-                let viewController = navigationController.viewControllers[0] as? AuthViewController
-            else {
-                assertionFailure("Failed to prepare for \(showAuthenticationScreenSegueIdentifier)")
-                return
-            }
-            viewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
-           }
-    }
-    
     // MARK: -  Private methods
+    
+    private func prepareSplashViewContent() {
+        view.backgroundColor = .ypBlack
+        let logoImage = UIImage(named: "logo")
+        let logoImageView = UIImageView(image: logoImage)
+        
+        logoImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(logoImageView)
+        logoImageView.contentMode = .scaleAspectFit
+        
+        logoImageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor).isActive = true
+        logoImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        logoImageView.widthAnchor.constraint(equalToConstant: 75).isActive = true
+        logoImageView.heightAnchor.constraint(equalToConstant: 77).isActive = true
+    }
     
     private func switchToBarController() {
         guard let window = UIApplication.shared.windows.first else { fatalError("Invalid configuration") }
@@ -54,6 +62,16 @@ final class SplashViewController: UIViewController {
             .instantiateViewController(withIdentifier: "TabBarViewController")
 
         window.rootViewController = tabBarController
+    }
+    
+    private func segueToAuthViewController() {
+        let storyboard = UIStoryboard(name: "Main", bundle: .main)
+        let authViewController = storyboard.instantiateViewController(identifier: "AuthViewController") as! AuthViewController
+        authViewController.delegate = self
+        let navigationController = UINavigationController(rootViewController: authViewController)
+
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true)
     }
 }
 
