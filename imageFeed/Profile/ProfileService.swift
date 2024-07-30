@@ -44,30 +44,45 @@ final class ProfileService {
             return
         }
         
-        let urlSessionTask = URLSession.shared.dataTask(with: profileDataRequest) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            guard let data = data else {
-                completion(.failure(ProfileServiceError.noData))
-                return
-            }
-            
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            
-            do {
-                let profileResponse = try decoder.decode(ProfileResult.self, from: data)
-                let profile = self.buildProfile(profileResponse: profileResponse)
+        let urlSessionTask = URLSession.shared.objectTask(for: profileDataRequest) { (result: Result<ProfileResult, Error>) in
+            switch result {
+            case .success(let profileResult):
+                let profile = self.buildProfile(profileResponse: profileResult)
+
                 self.profile = profile
                 completion(.success(profile))
-            } catch {
+
+                self.task = nil
+            case .failure(let error):
+                print("[ProfileService -> fetchProfile]: \(error)")
                 completion(.failure(error))
             }
-
-            self.task = nil
         }
+        
+//        let urlSessionTask = URLSession.shared.dataTask(with: profileDataRequest) { data, response, error in
+//            if let error = error {
+//                completion(.failure(error))
+//                return
+//            }
+//            guard let data = data else {
+//                completion(.failure(ProfileServiceError.noData))
+//                return
+//            }
+//
+//            let decoder = JSONDecoder()
+//            decoder.keyDecodingStrategy = .convertFromSnakeCase
+//
+//            do {
+//                let profileResponse = try decoder.decode(ProfileResult.self, from: data)
+//                let profile = self.buildProfile(profileResponse: profileResponse)
+//                self.profile = profile
+//                completion(.success(profile))
+//            } catch {
+//                completion(.failure(error))
+//            }
+//
+//            self.task = nil
+//        }
         self.task = urlSessionTask
         urlSessionTask.resume()
     }

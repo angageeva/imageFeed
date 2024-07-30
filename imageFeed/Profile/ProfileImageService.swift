@@ -44,40 +44,63 @@ final class ProfileImageService {
             return
         }
         
-        let urlSessionTask = URLSession.shared.dataTask(with: profileImageRequest) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            guard let data = data else {
-                completion(.failure(ProfileImageServiceError.noData))
-                return
-            }
-            
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            
-            do {
-                let profileImageResponse = try decoder.decode(UserResult.self, from: data)
+        let urlSessionTask = URLSession.shared.objectTask(for: profileImageRequest) { (result: Result<UserResult, Error>) in
+            switch result {
+            case .success(let profileImageResponse):
                 let smallProfileImage = profileImageResponse.profileImage.small
-
+                
                 self.avatarURL = smallProfileImage
-
+                
                 completion(.success(smallProfileImage))
-
+                
                 DispatchQueue.main.async {
-                    NotificationCenter.default                                    //не уверена, что должно быть так "В методе fetchProfileImageURL сразу после вызова completion добавьте публикацию нотификации:"
+                    NotificationCenter.default
                         .post(
                             name: ProfileImageService.didChangeNotification,
                             object: self,
                             userInfo: ["URL": smallProfileImage])
                 }
-            } catch {
+                self.task = nil
+            case .failure(let error):
+                print("[ProfileImageService -> fetchProfileImageURL]: \(error)")
                 completion(.failure(error))
             }
-
-            self.task = nil
         }
+        
+//        let urlSessionTask = URLSession.shared.dataTask(with: profileImageRequest) { data, response, error in
+//            if let error = error {
+//                completion(.failure(error))
+//                return
+//            }
+//            guard let data = data else {
+//                completion(.failure(ProfileImageServiceError.noData))
+//                return
+//            }
+//
+//            let decoder = JSONDecoder()
+//            decoder.keyDecodingStrategy = .convertFromSnakeCase
+//
+//            do {
+//                let profileImageResponse = try decoder.decode(UserResult.self, from: data)
+//                let smallProfileImage = profileImageResponse.profileImage.small
+//
+//                self.avatarURL = smallProfileImage
+//
+//                completion(.success(smallProfileImage))
+//
+//                DispatchQueue.main.async {
+//                    NotificationCenter.default                                    //не уверена, что должно быть так "В методе fetchProfileImageURL сразу после вызова completion добавьте публикацию нотификации:"
+//                        .post(
+//                            name: ProfileImageService.didChangeNotification,
+//                            object: self,
+//                            userInfo: ["URL": smallProfileImage])
+//                }
+//            } catch {
+//                completion(.failure(error))
+//            }
+//
+//            self.task = nil
+//        }
         self.task = urlSessionTask
         urlSessionTask.resume()
     }

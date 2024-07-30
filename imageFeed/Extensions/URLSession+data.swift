@@ -4,6 +4,7 @@ enum NetworkError: Error {
     case httpStatusCode(Int)
     case urlRequestError(Error)
     case urlSessionError
+    case decodeError(Error)
 }
 
 extension URLSession {
@@ -16,21 +17,62 @@ extension URLSession {
                 completion(result)
             }
         }
-        
+
         let task = dataTask(with: request, completionHandler: { data, response, error in
             if let data = data, let response = response, let statusCode = (response as? HTTPURLResponse)?.statusCode {
                 if 200 ..< 300 ~= statusCode {
                     fulfillCompletionOnTheMainThread(.success(data))
                 } else {
-                    fulfillCompletionOnTheMainThread(.failure(NetworkError.httpStatusCode(statusCode)))
+                    let httpStatusCodeError = NetworkError.httpStatusCode(statusCode)
+                    print("[dataTask]: Network Error - \(httpStatusCodeError)")
+
+                    fulfillCompletionOnTheMainThread(.failure(httpStatusCodeError))
                 }
             } else if let error = error {
-                fulfillCompletionOnTheMainThread(.failure(NetworkError.urlRequestError(error)))
+                let urlRequestError = NetworkError.urlRequestError(error)
+                print("[dataTask]: Network Error - \(urlRequestError)")
+
+                fulfillCompletionOnTheMainThread(.failure(urlRequestError))
             } else {
-                fulfillCompletionOnTheMainThread(.failure(NetworkError.urlSessionError))
+                let urlSessionError = NetworkError.urlSessionError
+                print("[dataTask]: Network Error - \(urlSessionError)")
+
+                fulfillCompletionOnTheMainThread(.failure(urlSessionError))
             }
         })
         
+        return task
+    }
+}
+
+extension URLSession {
+    func objectTask<T: Decodable>(
+        for request: URLRequest,
+        completion: @escaping (Result<T, Error>) -> Void
+    ) -> URLSessionTask {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+
+        let task = data(for: request) { result in
+            switch result {
+            case .success(let data):
+                do {
+                    let decodedObject = try decoder.decode(T.self, from: data)
+
+                    completion(.success(decodedObject))
+                } catch {
+                    let decodeError = NetworkError.decodeError(error)
+                    print("[objectTask]: Decode Error - \(decodeError)")
+
+                    completion(.failure(decodeError))
+                }
+            case .failure:
+                let urlSessionError = NetworkError.urlSessionError
+                print("[objectTask]: Network Error - \(urlSessionError)")
+
+                completion(.failure(urlSessionError))
+            }
+        }
         return task
     }
 }

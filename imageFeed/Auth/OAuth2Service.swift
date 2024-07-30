@@ -33,29 +33,43 @@ final class OAuth2Service {
             completion(.failure(OAuth2Error.invalidRequest))
             return
         }
-        let urlSessionTask = URLSession.shared.dataTask(with: oAuthTokenRequest) { [weak self] data, response, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            guard let data = data else {
-                completion(.failure(OAuth2Error.noData))
-                return
-            }
-            
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            
-            do {
-                let tokenResponse = try decoder.decode(OAuthTokenResponseBody.self, from: data)
-                completion(.success(tokenResponse.accessToken))
-            } catch {
-                completion(.failure(error))
-            }
+        let urlSessionTask = urlSession.objectTask(for: oAuthTokenRequest) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+            switch result {
+            case .success(let tokenResponseBody):
+                let accessToken = tokenResponseBody.accessToken
 
-            self?.task = nil
-            self?.lastCode = nil //probably it is not in main.sync
+                completion(.success(accessToken))
+
+                self?.task = nil
+                self?.lastCode = nil
+            case .failure(let error):
+                print("[OAuth2Service -> fetchOAuthToken]: \(error)")
+                completion(.failure(error))
+            }
         }
+//        let urlSessionTask = URLSession.shared.dataTask(with: oAuthTokenRequest) { [weak self] data, response, error in
+//            if let error = error {
+//                completion(.failure(error))
+//                return
+//            }
+//            guard let data = data else {
+//                completion(.failure(OAuth2Error.noData))
+//                return
+//            }
+//
+//            let decoder = JSONDecoder()
+//            decoder.keyDecodingStrategy = .convertFromSnakeCase
+//
+//            do {
+//                let tokenResponse = try decoder.decode(OAuthTokenResponseBody.self, from: data)
+//                completion(.success(tokenResponse.accessToken))
+//            } catch {
+//                completion(.failure(error))
+//            }
+//
+//            self?.task = nil
+//            self?.lastCode = nil //probably it is not in main.sync
+//        }
         self.task = urlSessionTask
         urlSessionTask.resume() //they use task.resume()
     }

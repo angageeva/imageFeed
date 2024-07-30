@@ -57,6 +57,13 @@ final class AuthViewController: UIViewController {
     private func settingLogButton() {
         logButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
     }
+    
+    private func showAlert() {
+        let alertController = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось войти в систему", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Ок", style: .default, handler: nil)
+        alertController.addAction(action)
+        present(alertController, animated: true, completion: nil)
+    }
 }
 
 extension AuthViewController: WebViewControllerDelegate {
@@ -65,7 +72,7 @@ extension AuthViewController: WebViewControllerDelegate {
         
         oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
             //guard self in author code. shall we?
-            UIBlockingProgressHUD.dismiss()
+            //UIBlockingProgressHUD.dismiss()
             
             switch result {
             case .success(let accessToken):
@@ -73,10 +80,13 @@ extension AuthViewController: WebViewControllerDelegate {
                 
                 DispatchQueue.main.async {
                     self?.dismiss(animated: true) {
+                        UIBlockingProgressHUD.dismiss()
                         self?.delegate?.didAuthenticate()
                     }
                 }
             case .failure(let error):
+                UIBlockingProgressHUD.dismiss()
+                self?.showAlert()
                 print("Error from UNSPLASH: \(error)")
             }
         }
