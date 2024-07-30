@@ -142,11 +142,13 @@ final class ProfileViewController: UIViewController {
             let profileImageURL = ProfileImageService.shared.avatarURL,
             let url = URL(string: profileImageURL)
         else { return }
-        let processor = RoundCornerImageProcessor(cornerRadius: 35, backgroundColor: .clear)
+        
+        let processor = RoundCornerImageProcessor(cornerRadius: 35)
         imageView.kf.indicatorType = .activity
         imageView.kf.setImage(with: url,
                               placeholder: UIImage(named: "placeholder.png"),
-                              options: [.processor(processor)
+                              options: [
+                                .processor(processor),
                                        ]) { result in
             switch result {
                 // Успешная загрузка

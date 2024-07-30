@@ -47,7 +47,8 @@ final class ProfileImageService {
         let urlSessionTask = URLSession.shared.objectTask(for: profileImageRequest) { (result: Result<UserResult, Error>) in
             switch result {
             case .success(let profileImageResponse):
-                let smallProfileImage = profileImageResponse.profileImage.small
+                // we need 'fm' parameter for fetching Unsplash png image to make RoundCornerImageProcessor work correctly
+                let smallProfileImage = (profileImageResponse.profileImage.small + "&fm=png")
                 
                 self.avatarURL = smallProfileImage
                 
