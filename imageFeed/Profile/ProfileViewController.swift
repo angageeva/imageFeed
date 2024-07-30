@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 // MARK: ProfileViewController
 
@@ -51,10 +52,9 @@ final class ProfileViewController: UIViewController {
     // MARK: private methods
     
     private func addProfileImage() {
-        //creating UIImage
-        let avatarImage = UIImage(named: "avatar")
-        
-        imageView.image = avatarImage
+//        imageView.image = avatarImage
+//        imageView.layer.masksToBounds = true
+//        imageView.layer.cornerRadius = 30
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         //adding subview
@@ -75,7 +75,6 @@ final class ProfileViewController: UIViewController {
     
     private func addNameLabel() {
         // editing nameLabel
-        //nameLabel.text = profile?.name
         nameLabel.font = UIFont.boldSystemFont(ofSize: 23)
         nameLabel.textColor = .ypWhite
         
@@ -89,7 +88,6 @@ final class ProfileViewController: UIViewController {
     
     private func addnickLabel() {
         // editing nickLabel
-        //nickLabel.text = profile?.loginName
         nickLabel.font = UIFont.systemFont(ofSize: 13)
         nickLabel.textColor = .ypGray
         
@@ -103,7 +101,6 @@ final class ProfileViewController: UIViewController {
 
     private func addDescriptionLabel() {
         // editing descriptionLabel
-        //descriptionLabel.text = profile?.bio
         descriptionLabel.font = UIFont.systemFont(ofSize: 13)
         descriptionLabel.textColor = .ypWhite
         descriptionLabel.numberOfLines = 0
@@ -136,17 +133,31 @@ final class ProfileViewController: UIViewController {
     
     private func updateProfileDetails(profile: Profile) {
         nameLabel.text = profile.name
-        descriptionLabel.text = profile.bio
+        descriptionLabel.text = profile.bio ?? ""
         nickLabel.text = profile.loginName
     }
     
     private func updateAvatar() {
-           guard
-               let profileImageURL = ProfileImageService.shared.avatarURL,
-               let url = URL(string: profileImageURL)
-           else { return }
-           // TODO [Sprint 11] Обновитt аватар, используя Kingfisher
-       }
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+        let processor = RoundCornerImageProcessor(cornerRadius: 35, backgroundColor: .clear)
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(with: url,
+                              placeholder: UIImage(named: "placeholder.png"),
+                              options: [.processor(processor)
+                                       ]) { result in
+            switch result {
+                // Успешная загрузка
+            case .success(_):
+                break
+                // В случае ошибки
+            case .failure(let error):
+                print("Can't load the image!: \(error)")
+            }
+        }
+    }
     
 //    private func syncProfileData() {
 //        profileService.fetchProfile(oAuthTokenStorage.token!) { [weak self] result in
