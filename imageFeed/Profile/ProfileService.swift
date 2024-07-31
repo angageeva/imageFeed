@@ -42,7 +42,8 @@ final class ProfileService {
             return
         }
         
-        let urlSessionTask = URLSession.shared.objectTask(for: profileDataRequest) { (result: Result<ProfileResult, Error>) in
+        let urlSessionTask = URLSession.shared.objectTask(for: profileDataRequest) { [weak self](result: Result<ProfileResult, Error>) in
+            guard let self = self else { return }
             switch result {
             case .success(let profileResult):
                 let profile = self.buildProfile(profileResponse: profileResult)

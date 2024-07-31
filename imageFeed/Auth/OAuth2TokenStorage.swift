@@ -9,7 +9,7 @@ final class OAuth2TokenStorage {
     
     private let keychainStorage = KeychainWrapper.standard
     
-    private enum Keys: String {
+     enum Keys: String {
         case token
     }
     

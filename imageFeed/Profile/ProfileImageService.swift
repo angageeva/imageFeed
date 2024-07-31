@@ -48,7 +48,8 @@ final class ProfileImageService {
             return
         }
         
-        let urlSessionTask = URLSession.shared.objectTask(for: profileImageRequest) { (result: Result<UserResult, Error>) in
+        let urlSessionTask = URLSession.shared.objectTask(for: profileImageRequest) { [weak self] (result: Result<UserResult, Error>) in
+            guard let self = self else { return }
             switch result {
             case .success(let profileImageResponse):
                 let smallProfileImage = self.smallProfilePngImage(profileImageResponse.profileImage.small)
@@ -88,6 +89,6 @@ final class ProfileImageService {
     
     private func smallProfilePngImage(_ profieImageUrl: String) -> String {
         // we need 'fm' parameter for fetching Unsplash png image to make RoundCornerImageProcessor work correctly
-        return (profieImageUrl + "&fm=png")
+        (profieImageUrl + "&fm=png")
     }
 }
