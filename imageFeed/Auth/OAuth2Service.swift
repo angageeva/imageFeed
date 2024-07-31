@@ -4,6 +4,7 @@ import Foundation
 
 enum OAuth2Error: Error {
     case noData
+    case invalidRequest
 }
 
 final class OAuth2Service {
@@ -11,36 +12,50 @@ final class OAuth2Service {
 
     static let shared = OAuth2Service()
     
+    private let urlSession = URLSession.shared
+    
+    private var task: URLSessionTask?
+    private var lastCode: String?
+    
     // MARK: - Public methods
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
-            guard let oAuthTokenRequest = buildOAuthTokenRequest(code: code) else {
-                print("Can't build the request!")
-                return
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async {
+                self.fetchOAuthToken(code: code, completion: completion)
             }
-            let urlSessionTask = URLSession.shared.dataTask(with: oAuthTokenRequest) { data, response, error in
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
-                guard let data = data else {
-                    completion(.failure(OAuth2Error.noData))
-                    return
-                }
-                
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                
-                do {
-                    let tokenResponse = try decoder.decode(OAuthTokenResponseBody.self, from: data)
-                    completion(.success(tokenResponse.accessToken))
-                } catch {
-                    completion(.failure(error))
-                }
-            }
-            
-            urlSessionTask.resume()
+            return
         }
+        
+        guard lastCode != code else {
+            completion(.failure(OAuth2Error.invalidRequest))
+            return
+        }
+        task?.cancel()
+        self.lastCode = code
+        
+        guard let oAuthTokenRequest = buildOAuthTokenRequest(code: code) else {
+            completion(.failure(OAuth2Error.invalidRequest))
+            return
+        }
+        let urlSessionTask = urlSession.objectTask(for: oAuthTokenRequest) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+            switch result {
+            case .success(let tokenResponseBody):
+                let accessToken = tokenResponseBody.accessToken
+
+                completion(.success(accessToken))
+
+                self?.task = nil
+                self?.lastCode = nil
+            case .failure(let error):
+                print("[OAuth2Service -> fetchOAuthToken]: \(error)")
+                completion(.failure(error))
+            }
+        }
+        self.task = urlSessionTask
+
+        urlSessionTask.resume()
+    }
     
     // MARK: - Private methods
     
@@ -58,7 +73,7 @@ final class OAuth2Service {
         ]
 
         guard let url = urlComponents.url else {
-            print("Can't form the url!")
+            assertionFailure("Failed to create URL")
             return nil
         }
         var request = URLRequest(url: url)

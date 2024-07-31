@@ -6,7 +6,6 @@ extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         guard let image = UIImage(named: photoNames[indexPath.row]) else {
             imageFeedLog.logError("Couldn't find the image")
-
             return 0
         }
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
@@ -15,7 +14,6 @@ extension ImagesListViewController: UITableViewDelegate {
 
         guard imageWidth != 0 else {
             imageFeedLog.logError("Error: The width of the image is equal to zero")
-
             return 0
         }
         let scale = imageViewWidth / imageWidth

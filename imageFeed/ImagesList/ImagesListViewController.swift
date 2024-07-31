@@ -5,6 +5,10 @@ import UIKit
 final class ImagesListViewController: UIViewController {
     
     // MARK: - Properties
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     let showSingleImageSegueIdentifier = "ShowSingleImage"
     let imageFeedLog = ImageFeedLog()
@@ -14,10 +18,13 @@ final class ImagesListViewController: UIViewController {
     private let bottomInset: CGFloat = 8
     private let leftInset: CGFloat = 0
     private let rightInset: CGFloat = 0
+    private let photoDateFormat = "dd MMMM yyyy"
+    
+    @IBOutlet private var tableView: UITableView!
 
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "dd MMMM yyyy"
+        formatter.dateFormat = photoDateFormat
         formatter.locale = Locale(identifier: "ru_RU")
         return formatter
     }()
@@ -25,12 +32,6 @@ final class ImagesListViewController: UIViewController {
     func getFormattedDate() -> String {
         dateFormatter.string(from: Date())
     }
-
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-
-    @IBOutlet private var tableView: UITableView!
     
     // MARK: - Lifecycle methods
     

@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 // MARK: ProfileViewController
 
@@ -10,27 +11,46 @@ final class ProfileViewController: UIViewController {
         return .lightContent
     }
     
+    private let oAuthTokenStorage = OAuth2TokenStorage()
     private let imageView = UIImageView()
+    private let profileService = ProfileService.shared
+    
+    private let nameLabel = UILabel()
+    private let nickLabel = UILabel()
+    private let descriptionLabel = UILabel()
+    
+    private var profileImageServiceObserver: NSObjectProtocol?
     
     // MARK: - Lifecycle methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+
+                self.updateAvatar()
+            }
+        updateAvatar()
         addProfileImage()
-        addLabels()
         addExitButton()
+        addLabels()
+
+        if let profile = profileService.profile {
+            updateProfileDetails(profile: profile)
+        }
     }
     
-    // MARK: private methods
+    // MARK: - Private methods
     
     private func addProfileImage() {
-        //creating UIImage
-        let avatarImage = UIImage(named: "avatar")
-        
-        imageView.image = avatarImage
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         //adding subview
         view.addSubview(imageView)
         
@@ -42,18 +62,13 @@ final class ProfileViewController: UIViewController {
     }
     
     private func addLabels() {
-        let nameLabel = UILabel()
-        let nickLabel = UILabel()
-        let descriptionLabel = UILabel()
-        
-        addNameLabel(nameLabel: nameLabel)
-        addnickLabel(nickLabel: nickLabel, nameLabel: nameLabel)
-        addDescriptionLabel(descriptionLabel: descriptionLabel, nickLabel: nickLabel)
+        addNameLabel()
+        addNickLabel()
+        addDescriptionLabel()
     }
     
-    private func addNameLabel(nameLabel: UILabel) {
+    private func addNameLabel() {
         // editing nameLabel
-        nameLabel.text = "Екатерина Новикова"
         nameLabel.font = UIFont.boldSystemFont(ofSize: 23)
         nameLabel.textColor = .ypWhite
         
@@ -65,9 +80,8 @@ final class ProfileViewController: UIViewController {
         nameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8).isActive = true
     }
     
-    private func addnickLabel(nickLabel: UILabel, nameLabel: UILabel) {
+    private func addNickLabel() {
         // editing nickLabel
-        nickLabel.text = "@ekaterina_nov"
         nickLabel.font = UIFont.systemFont(ofSize: 13)
         nickLabel.textColor = .ypGray
         
@@ -79,9 +93,8 @@ final class ProfileViewController: UIViewController {
         nickLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8).isActive = true
     }
 
-    private func addDescriptionLabel(descriptionLabel: UILabel, nickLabel: UILabel) {
+    private func addDescriptionLabel() {
         // editing descriptionLabel
-        descriptionLabel.text = "Hello, world!"
         descriptionLabel.font = UIFont.systemFont(ofSize: 13)
         descriptionLabel.textColor = .ypWhite
         descriptionLabel.numberOfLines = 0
@@ -110,5 +123,34 @@ final class ProfileViewController: UIViewController {
         button.heightAnchor.constraint(equalToConstant: 22).isActive = true
         button.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
         button.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -26).isActive = true
+    }
+    
+    private func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name
+        descriptionLabel.text = profile.bio ?? ""
+        nickLabel.text = profile.loginName
+    }
+    
+    private func updateAvatar() {
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+        
+        let processor = RoundCornerImageProcessor(cornerRadius: 35)
+
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(with: url,
+                              placeholder: UIImage(named: "placeholder.png"),
+                              options: [
+                                .processor(processor),
+                                       ]) { result in
+            switch result {
+            case .success(_):
+                break
+            case .failure(let error):
+                print("[ProfileViewController -> updateAvatar]: Error loading image: \(error)")
+            }
+        }
     }
 }

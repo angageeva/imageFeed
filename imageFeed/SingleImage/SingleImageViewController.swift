@@ -29,12 +29,18 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         scrollView.minimumZoomScale = minimumZoomScale
         scrollView.maximumZoomScale = maximumZoomScale
 
-        guard let image else { return }
-        
+        guard let image = image else { return }
         setImage(image: image)
+    }
+    
+    // MARK: - Public methods
+    
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        imageView
     }
     
     // MARK: - UIActions
@@ -51,12 +57,6 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
             applicationActivities: nil
         )
         present(shared, animated: true, completion: nil)
-    }
-    
-    // MARK: delegate methods
-    
-    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        imageView
     }
     
     // MARK: private methods

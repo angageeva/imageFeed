@@ -12,57 +12,37 @@ final class WebViewController: UIViewController {
     
     // MARK: - Properties
     
-    @IBOutlet weak private var webView: WKWebView!
-    @IBOutlet weak private var progressView: UIProgressView!
-    
-    private let unsplashOAuthNativeURL = "/oauth/authorize/native"
-    private static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
-
     weak var delegate: WebViewControllerDelegate?
-
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .darkContent
     }
+    
+    private let unsplashOAuthNativeURL = "/oauth/authorize/native"
+    private static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+    private var estimatedProgressObservation: NSKeyValueObservation?
+
+    @IBOutlet weak private var webView: WKWebView!
+    @IBOutlet weak private var progressView: UIProgressView!
 
     // MARK: - Lifecyclemethods
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        webView.addObserver(
-            self,
-            forKeyPath: #keyPath(WKWebView.estimatedProgress),
-            options: .new,
-            context: nil)
-        updateProgress()
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         loadAuthView()
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+        updateProgress()
         
-        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), context: nil)
+        estimatedProgressObservation = webView.observe(
+            \.estimatedProgress,
+             options: [],
+             changeHandler: { [weak self] _, _ in
+                 guard let self = self else { return }
+
+                 self.updateProgress()
+             })
     }
-    
-    override func observeValue(
-        forKeyPath keyPath: String?,
-        of object: Any?,
-        change: [NSKeyValueChangeKey : Any]?,
-        context: UnsafeMutableRawPointer?
-    ) {
-        if keyPath == #keyPath(WKWebView.estimatedProgress) {
-            updateProgress()
-        } else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-        }
-    }
-    
-    
+
     // MARK: - Private methods
     
     private func loadAuthView() {
