@@ -21,6 +21,8 @@
 		584B8F6D2C5945E20003D5F3 /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 584B8F6C2C5945E20003D5F3 /* SwiftKeychainWrapper */; };
 		584B8F6F2C594C4E0003D5F3 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584B8F6E2C594C4E0003D5F3 /* TabBarController.swift */; };
 		584B8F722C5987890003D5F3 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584B8F712C5987890003D5F3 /* Profile.swift */; };
+		585744AF2C5A7BF600CA946F /* ImagesListService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585744AE2C5A7BF600CA946F /* ImagesListService.swift */; };
+		585744B12C5A8C5500CA946F /* PhotoResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585744B02C5A8C5500CA946F /* PhotoResult.swift */; };
 		586574712C53C4B30094593F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586574702C53C4B30094593F /* Constants.swift */; };
 		586574772C53E7D90094593F /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 586574762C53E7D90094593F /* AuthViewController.swift */; };
 		5897DE312C56392400F814E1 /* OAuth2Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5897DE302C56392400F814E1 /* OAuth2Service.swift */; };
@@ -52,6 +54,8 @@
 		584B8F632C57E5BE0003D5F3 /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
 		584B8F6E2C594C4E0003D5F3 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		584B8F712C5987890003D5F3 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		585744AE2C5A7BF600CA946F /* ImagesListService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListService.swift; sourceTree = "<group>"; };
+		585744B02C5A8C5500CA946F /* PhotoResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoResult.swift; sourceTree = "<group>"; };
 		586574702C53C4B30094593F /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		586574762C53E7D90094593F /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		5897DE302C56392400F814E1 /* OAuth2Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2Service.swift; sourceTree = "<group>"; };
@@ -90,6 +94,7 @@
 			children = (
 				5819A8832C5666C600453710 /* OAuthTokenResponseBody.swift */,
 				584B8F712C5987890003D5F3 /* Profile.swift */,
+				585744B02C5A8C5500CA946F /* PhotoResult.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -189,6 +194,7 @@
 		58CF4F8B2B851A2700E6A49E /* ImagesList */ = {
 			isa = PBXGroup;
 			children = (
+				585744AE2C5A7BF600CA946F /* ImagesListService.swift */,
 				589A2E4D2B7BA93C0046E06C /* ImagesListViewController.swift */,
 				582743B92B90A7BF0052667F /* ImagesListCell.swift */,
 			);
@@ -308,6 +314,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5819A8812C565F6400453710 /* URLSession+data.swift in Sources */,
+				585744AF2C5A7BF600CA946F /* ImagesListService.swift in Sources */,
 				586574772C53E7D90094593F /* AuthViewController.swift in Sources */,
 				589A2E4E2B7BA93C0046E06C /* ImagesListViewController.swift in Sources */,
 				5819A8882C56971E00453710 /* SplashViewController.swift in Sources */,
@@ -327,6 +334,7 @@
 				5897DE382C58DA2400F814E1 /* ProfileImageService.swift in Sources */,
 				584B8F6F2C594C4E0003D5F3 /* TabBarController.swift in Sources */,
 				584B8F722C5987890003D5F3 /* Profile.swift in Sources */,
+				585744B12C5A8C5500CA946F /* PhotoResult.swift in Sources */,
 				5819A8842C5666C600453710 /* OAuthTokenResponseBody.swift in Sources */,
 				584B8F642C57E5BE0003D5F3 /* UIBlockingProgressHUD.swift in Sources */,
 			);

@@ -57,4 +57,15 @@ final class ImagesListViewController: UIViewController {
 
         viewController.image = image
     }
+    
+    func tableView(
+      _ tableView: UITableView,
+      willDisplay cell: UITableViewCell,
+      forRowAt indexPath: IndexPath
+    ) {
+        //if indexPath.row + 1 == photos.count {
+            //Поэтому нужно сделать так, чтобы многократные вызовы fetchPhotosNextPage() были «дешёвыми» по ресурсам и не приводили к прерыванию текущего сетевого запроса.
+            //fetchPhotosNextPage()
+        //}
+    }
 }
