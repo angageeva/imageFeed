@@ -77,6 +77,7 @@ extension AuthViewController: WebViewControllerDelegate {
             switch result {
             case .success(let accessToken):
                 self?.oAuthTokenStorage.token = accessToken
+                print(accessToken)
                 
                 DispatchQueue.main.async {
                     self?.dismiss(animated: true) {
