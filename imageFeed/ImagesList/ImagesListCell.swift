@@ -1,5 +1,9 @@
 import UIKit
 
+protocol ImagesListCellDelegate: AnyObject {
+    func imageListCellDidTapLike(_ cell: ImagesListCell)
+}
+
 // MARK: - ImagesListCell
 
 final class ImagesListCell: UITableViewCell {
@@ -13,6 +17,8 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var gradientLayerView: UIView!
+    
+    weak var delegate: ImagesListCellDelegate? 
 
     static private let cornerRadius = 16.0
 
@@ -30,7 +36,15 @@ final class ImagesListCell: UITableViewCell {
         cellImage.kf.cancelDownloadTask()
     }
     
-    @IBAction func likeButtonClicked(){}
+    @IBAction func likeButtonClicked() {
+        delegate?.imageListCellDidTapLike(self)
+    }
+    
+    // MARK: - Public methods
+    
+    func setIsLiked(isLiked: Bool)  {
+        likeButton.setImage(UIImage(named: isLiked ? "favorites_button_on" : "favorites_button_of"), for: .normal)
+    }
     
     // MARK: - Private methods
     

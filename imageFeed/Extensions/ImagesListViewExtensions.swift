@@ -47,9 +47,41 @@ extension ImagesListViewController: UITableViewDataSource {
 
             return UITableViewCell()
         }
+        
+        imageListCell.delegate = self
         configCell(for: imageListCell, with: indexPath)
 
         return imageListCell
+    }
+}
+
+extension ImagesListViewController: ImagesListCellDelegate {
+    func imageListCellDidTapLike(_ cell: ImagesListCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        let photo = photos[indexPath.row]
+        
+        UIBlockingProgressHUD.show()
+        
+        imagesListService.changeLike(photoId: photo.id, isLike: photo.isLiked) {
+            result in
+            switch result {
+            case .success:
+                self.photos = self.imagesListService.photos
+                cell.setIsLiked(isLiked: self.photos[indexPath.row].isLiked)
+                UIBlockingProgressHUD.dismiss()
+            case .failure:
+                UIBlockingProgressHUD.dismiss()
+                self.showAlert()
+            }
+        }
+    }
+    
+    private func showAlert() {
+        let alertController = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось войти в систему", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Ок", style: .default, handler: nil)
+        
+        alertController.addAction(action)
+        present(alertController, animated: true, completion: nil)
     }
 }
 
@@ -65,7 +97,7 @@ extension ImagesListViewController {
         
         //cell.cellImage.image = image
         cell.dateLabel.text = getFormattedDate()
-        cell.likeButton.setImage(cellFavoriteImage(index: indexPath.row), for: .normal)
+        //cell.likeButton.setImage(cellFavoriteImage(index: indexPath.row), for: .normal)
 
         let gradient = cellGradient()
 
@@ -74,12 +106,12 @@ extension ImagesListViewController {
         cell.gradientLayer = gradient
     }
 
-    func cellFavoriteImage(index: Int) -> UIImage? {
-        let isEven = index % 2 == 0
-        let buttonImage = isEven ? UIImage(named: "favorites_button_on") : UIImage(named: "favorites_button_off")
-        
-        return buttonImage
-    }
+//    func cellFavoriteImage(index: Int) -> UIImage? {
+//        let isEven = index % 2 == 0
+//        let buttonImage = isEven ? UIImage(named: "favorites_button_on") : UIImage(named: "favorites_button_off")
+//
+//        return buttonImage
+//    }
 
     func cellGradient() -> CAGradientLayer {
         let gradient = CAGradientLayer()

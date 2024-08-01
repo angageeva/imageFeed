@@ -23,7 +23,7 @@ final class ImagesListViewController: UIViewController {
     private let rightInset: CGFloat = 0
     private let photoDateFormat = "dd MMMM yyyy"
     
-    @IBOutlet private var tableView: UITableView!
+    @IBOutlet var tableView: UITableView!
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -43,6 +43,8 @@ final class ImagesListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        
         imagesListServiceObserver = NotificationCenter.default
             .addObserver(
                 forName: ImagesListService.didChangeNotification,
@@ -54,9 +56,6 @@ final class ImagesListViewController: UIViewController {
                 self.updateTableViewAnimated()
             }
         imagesListService.fetchPhotosNextPage()
-        
-        
-        tableView.contentInset = UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
     }
     
     // MARK: - Public methods

@@ -1,7 +1,6 @@
 import Foundation
 import UIKit
 
-//Дополнительно в сервисе будем хранить служебную информацию
 struct Photo {
     let id: String
     let size: CGSize
@@ -9,7 +8,7 @@ struct Photo {
     let welcomeDescription: String?
     let thumbImageURL: String
     let largeImageURL: String
-    let isLiked: Bool
+    var isLiked: Bool
 }
 
 final class ImagesListService {
@@ -30,7 +29,7 @@ final class ImagesListService {
         return formatter
     }()
     
-        func fetchPhotosNextPage() {
+    func fetchPhotosNextPage() {
         if self.task != nil {
             print("[ImagesListService -> fetchPhotosNextPage]: Downloading is already in process.")
             return
@@ -48,42 +47,42 @@ final class ImagesListService {
         
         lastLoadedPage += 1
         
-            // return to code [weak self], not working without
-            let urlSessionTask = URLSession.shared.objectTask(for: photoRequest) { (result: Result<[PhotoResult], Error>) in
-//                guard let self = self else {
-//                    return }
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let photoResult):
-                        let photoGroup = photoResult.map {
-                            Photo( id: $0.id,
-                                   size: CGSize(width: $0.width, height: $0.height),
-                                   createdAt: self.dateFormatter.date(from: $0.createdAt),
-                                   welcomeDescription: $0.description,
-                                   thumbImageURL: $0.urls.thumb.absoluteString,
-                                   largeImageURL: $0.urls.full.absoluteString,
-                                   isLiked: $0.likedByUser)
-                        }
-                        
-                        self.photos.append(contentsOf: photoGroup)
-                        
-                        
-                        NotificationCenter.default
-                            .post(
-                                name: ImagesListService.didChangeNotification,
-                                object: self)
-                        
-                        
-                        self.task = nil
-                    case .failure(let error):
-                        print("[ImagesListService -> fetchPhotosNextPage]: Error loading photos: \(error).")
+        // return to code [weak self], not working without
+        let urlSessionTask = URLSession.shared.objectTask(for: photoRequest) { [weak self] (result: Result<[PhotoResult], Error>) in
+            guard let self = self else {
+                return }
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let photoResult):
+                    let photoGroup = photoResult.map {
+                        Photo( id: $0.id,
+                               size: CGSize(width: $0.width, height: $0.height),
+                               createdAt: self.dateFormatter.date(from: $0.createdAt),
+                               welcomeDescription: $0.description,
+                               thumbImageURL: $0.urls.thumb.absoluteString,
+                               largeImageURL: $0.urls.full.absoluteString,
+                               isLiked: $0.likedByUser)
                     }
+                    
+                    self.photos.append(contentsOf: photoGroup)
+                    
+                    
+                    NotificationCenter.default
+                        .post(
+                            name: ImagesListService.didChangeNotification,
+                            object: self)
+                    
+                    
+                    self.task = nil
+                case .failure(let error):
+                    print("[ImagesListService -> fetchPhotosNextPage]: Error loading photos: \(error).")
                 }
             }
-            self.task = urlSessionTask
-            
-            urlSessionTask.resume()
         }
+        self.task = urlSessionTask
+        
+        urlSessionTask.resume()
+    }
     
     
     
@@ -91,14 +90,42 @@ final class ImagesListService {
     //Добавить свойство task: URLSessionTask? (сохраняем в нём результат urlSession.objectTask), и если task != nil, то сетевой запрос в прогрессе.
     // Так как читать массив photos мы будем из main
     
+    private func buildPhotoRequest(token: String) -> URLRequest? {
+        let url = Constants.defaultBaseURL.appendingPathComponent("/photos")
+        var request = URLRequest(url: url)
+        
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        return request
+    }
+    
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void?, Error>) -> Void) {
+        guard let token = oAuthTokenStorage.token else {
+            print("[ImagesListService]: Inavlid token.")
+            return
+        }
+        
+        let url = Constants.defaultBaseURL.appendingPathComponent("/photos/\(photoId)/like")
+        var request = URLRequest(url: url)
+        request.httpMethod = isLike ? "POST" : "DELETE"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        let urlSessionTask = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<Data, Error>) in
+            guard let self = self else { return }
+            //скореее всего должен быть main.assync
+            //в учебнике предлагают делать копию всего элемента и заменять
+            switch result {
+            case .success:
+                if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
+                    self.photos[index].isLiked = isLike
+                    completion(.success(nil))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+        urlSessionTask.resume()
+    }
 }
 
-private func buildPhotoRequest(token: String) -> URLRequest? {
-    let url = Constants.defaultBaseURL.appendingPathComponent("/photos")
-    var request = URLRequest(url: url)
-    
-    request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-    
-    return request
-}
 
