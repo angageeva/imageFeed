@@ -5,7 +5,7 @@ import UIKit
 final class ImagesListViewController: UIViewController {
     
     // MARK: - Properties
-
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
@@ -13,7 +13,10 @@ final class ImagesListViewController: UIViewController {
     let showSingleImageSegueIdentifier = "ShowSingleImage"
     let imageFeedLog = ImageFeedLog()
     let photoNames: [String] = Array(0..<20).map{ "\($0)" }
-
+    let imagesListService = ImagesListService.shared
+    
+    var photos: [Photo] = []
+    
     private let topInset: CGFloat = 12
     private let bottomInset: CGFloat = 8
     private let leftInset: CGFloat = 0
@@ -21,14 +24,16 @@ final class ImagesListViewController: UIViewController {
     private let photoDateFormat = "dd MMMM yyyy"
     
     @IBOutlet private var tableView: UITableView!
-
+    
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = photoDateFormat
         formatter.locale = Locale(identifier: "ru_RU")
         return formatter
     }()
-
+    
+    private var imagesListServiceObserver: NSObjectProtocol?
+    
     func getFormattedDate() -> String {
         dateFormatter.string(from: Date())
     }
@@ -37,12 +42,25 @@ final class ImagesListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        imagesListServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ImagesListService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                
+                self.updateTableViewAnimated()
+            }
+        imagesListService.fetchPhotosNextPage()
+        
+        
         tableView.contentInset = UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
     }
-
+    
     // MARK: - Public methods
-
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard
             segue.identifier == showSingleImageSegueIdentifier,
@@ -54,18 +72,22 @@ final class ImagesListViewController: UIViewController {
             return
         }
         let image = UIImage(named: photoNames[indexPath.row])
-
+        
         viewController.image = image
     }
     
-    func tableView(
-      _ tableView: UITableView,
-      willDisplay cell: UITableViewCell,
-      forRowAt indexPath: IndexPath
-    ) {
-        //if indexPath.row + 1 == photos.count {
-            //Поэтому нужно сделать так, чтобы многократные вызовы fetchPhotosNextPage() были «дешёвыми» по ресурсам и не приводили к прерыванию текущего сетевого запроса.
-            //fetchPhotosNextPage()
-        //}
+    private func updateTableViewAnimated() {
+        let oldCount = photos.count
+        let newCount = imagesListService.photos.count
+        photos = imagesListService.photos
+        if oldCount != newCount {
+            tableView.performBatchUpdates {
+                let indexPaths = (oldCount..<newCount).map { i in
+                    IndexPath(row: i, section: 0)
+                }
+                tableView.insertRows(at: indexPaths, with: .automatic)
+            } completion: { _ in }
+        }
     }
+    
 }

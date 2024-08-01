@@ -57,14 +57,38 @@ extension URLSession {
         for request: URLRequest,
         completion: @escaping (Result<T, Error>) -> Void
     ) -> URLSessionTask {
-//        let decoder = JSONDecoder()
-//        decoder.keyDecodingStrategy = .convertFromSnakeCase
         let decoder = URLSession.sharedDecoder
 
         let task = data(for: request) { result in
             switch result {
             case .success(let data):
+//                do {
+//                    let decodedObject = try decoder.decode(T.self, from: data)
+//                    completion(.success(decodedObject))
+//                } catch let decodingError as DecodingError {
+//                    switch decodingError {
+//                    case .typeMismatch(let key, let context):
+//                        print("Type mismatch for key \(key) in context: \(context)")
+//                    case .valueNotFound(let key, let context):
+//                        print("Value not found for key \(key) in context: \(context)")
+//                    case .keyNotFound(let key, let context):
+//                        print("Key \(key) not found in context: \(context)")
+//                    case .dataCorrupted(let context):
+//                        print("Data corrupted in context: \(context)")
+//                    @unknown default:
+//                        print("Unknown decoding error")
+//                    }
+//                    let decodeError = NetworkError.decodeError(decodingError)
+//                    print("[objectTask]: Decode Error - \(decodeError)")
+//                    completion(.failure(decodeError))
+//                } catch {
+//                    let decodeError = NetworkError.decodeError(error)
+//                    print("[objectTask]: Decode Error - \(decodeError)")
+//                    completion(.failure(decodeError))
+//                }
+
                 do {
+                    print(data)
                     let decodedObject = try decoder.decode(T.self, from: data)
 
                     completion(.success(decodedObject))

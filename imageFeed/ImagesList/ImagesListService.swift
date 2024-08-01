@@ -13,6 +13,8 @@ struct Photo {
 }
 
 final class ImagesListService {
+    static let shared = ImagesListService()
+    
     private let photoDateFormat = "dd MMMM yyyy"
     private let oAuthTokenStorage = OAuth2TokenStorage()
     
@@ -28,8 +30,8 @@ final class ImagesListService {
         return formatter
     }()
     
-    private func fetchPhotosNextPage() {
-        if let task = self.task {
+        func fetchPhotosNextPage() {
+        if self.task != nil {
             print("[ImagesListService -> fetchPhotosNextPage]: Downloading is already in process.")
             return
         }
@@ -46,38 +48,42 @@ final class ImagesListService {
         
         lastLoadedPage += 1
         
-        let urlSessionTask = URLSession.shared.objectTask(for: photoRequest) { [weak self] (result: Result<[PhotoResult], Error>) in
-            guard let self = self else { return }
-            switch result {
-            case .success(let photoResult):
-                let photoGroup = photoResult.map {
-                    Photo( id: $0.id,
-                           size: CGSize(width: $0.width, height: $0.height),
-                           createdAt: self.dateFormatter.date(from: $0.createdAt),
-                           welcomeDescription: $0.description,
-                           thumbImageURL: $0.urls.thumb.absoluteString,
-                           largeImageURL: $0.urls.full.absoluteString,
-                           isLiked: $0.likedByUser)
-                }
-                
-                self.photos.append(contentsOf: photoGroup)
-                
+            // return to code [weak self], not working without
+            let urlSessionTask = URLSession.shared.objectTask(for: photoRequest) { (result: Result<[PhotoResult], Error>) in
+//                guard let self = self else {
+//                    return }
                 DispatchQueue.main.async {
-                    NotificationCenter.default
-                        .post(
-                            name: ImagesListService.didChangeNotification,
-                            object: self)
+                    switch result {
+                    case .success(let photoResult):
+                        let photoGroup = photoResult.map {
+                            Photo( id: $0.id,
+                                   size: CGSize(width: $0.width, height: $0.height),
+                                   createdAt: self.dateFormatter.date(from: $0.createdAt),
+                                   welcomeDescription: $0.description,
+                                   thumbImageURL: $0.urls.thumb.absoluteString,
+                                   largeImageURL: $0.urls.full.absoluteString,
+                                   isLiked: $0.likedByUser)
+                        }
+                        
+                        self.photos.append(contentsOf: photoGroup)
+                        
+                        
+                        NotificationCenter.default
+                            .post(
+                                name: ImagesListService.didChangeNotification,
+                                object: self)
+                        
+                        
+                        self.task = nil
+                    case .failure(let error):
+                        print("[ImagesListService -> fetchPhotosNextPage]: Error loading photos: \(error).")
+                    }
                 }
-                
-                self.task = nil
-            case .failure(let error):
-                print("[ImagesListService -> fetchPhotosNextPage]: Error loading photos: \(error).")
             }
+            self.task = urlSessionTask
+            
+            urlSessionTask.resume()
         }
-        self.task = urlSessionTask
-        
-        urlSessionTask.resume()
-    }
     
     
     

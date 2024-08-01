@@ -24,6 +24,12 @@ final class ImagesListCell: UITableViewCell {
         resizeGradientLayerView()
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        cellImage.kf.cancelDownloadTask()
+    }
+    
     @IBAction func likeButtonClicked(){}
     
     // MARK: - Private methods
