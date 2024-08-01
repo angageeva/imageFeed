@@ -134,6 +134,10 @@ final class ImagesListService {
         }
         urlSessionTask.resume()
     }
+    
+    func cleanPhotos() {
+        photos = []
+    }
 }
 
 
