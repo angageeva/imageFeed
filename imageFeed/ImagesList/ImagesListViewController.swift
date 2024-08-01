@@ -70,9 +70,9 @@ final class ImagesListViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
             return
         }
-        let image = UIImage(named: photoNames[indexPath.row])
+        let selectedPhoto = photos[indexPath.row]
         
-        viewController.image = image
+        viewController.photo = selectedPhoto
     }
     
     private func updateTableViewAnimated() {

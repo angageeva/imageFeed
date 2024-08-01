@@ -7,7 +7,7 @@ struct Photo {
     let createdAt: Date?
     let welcomeDescription: String?
     let thumbImageURL: String
-    let largeImageURL: String
+    let fullImageURL: String
     var isLiked: Bool
 }
 
@@ -60,7 +60,7 @@ final class ImagesListService {
                                createdAt: self.dateFormatter.date(from: $0.createdAt),
                                welcomeDescription: $0.description,
                                thumbImageURL: $0.urls.thumb.absoluteString,
-                               largeImageURL: $0.urls.full.absoluteString,
+                               fullImageURL: $0.urls.full.absoluteString,
                                isLiked: $0.likedByUser)
                     }
                     
