@@ -7,7 +7,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //Override point for customization after application launch.
         //KeychainWrapper.standard.removeObject(forKey: OAuth2TokenStorage.Keys.token.rawValue)
-        ProgressHUD.animationType = .activityIndicator
+        ProgressHUD.animationType = .systemActivityIndicator
         ProgressHUD.colorHUD = .black
         ProgressHUD.colorAnimation = .lightGray
 

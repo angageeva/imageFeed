@@ -6,13 +6,7 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
 
     // MARK: - Properties
 
-    var photo: Photo! {
-        didSet {
-            guard isViewLoaded, let photo else { return }
-    
-            setImage(photo: photo)
-        }
-    }
+    var photo: Photo!
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -87,6 +81,7 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
 
     private func setImage(photo: Photo) {
         UIBlockingProgressHUD.show()
+        imageView.frame.size = photo.size
 
         imageView.kf.setImage(with: URL(string: photo.fullImageURL)) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
@@ -94,7 +89,7 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
             guard let self = self else { return }
 
             switch result {
-            case .success(let imageResult):
+            case .success:
                 self.rescaleAndCenterImageInScrollView()
             case .failure:
                 print("error")
@@ -102,12 +97,6 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
                 self.showError(photo: photo)
             }
         }
-        imageView.frame.size = photo.size
-        
-//        imageView.image = image
-//        imageView.frame.size = image.size
-//
-//        rescaleAndCenterImageInScrollView(image: image)
     }
     
     private func showError(photo: Photo) {
