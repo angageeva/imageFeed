@@ -18,7 +18,7 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var gradientLayerView: UIView!
     
-    weak var delegate: ImagesListCellDelegate? 
+    weak var delegate: ImagesListCellDelegate?
 
     static private let cornerRadius = 16.0
 
@@ -43,7 +43,7 @@ final class ImagesListCell: UITableViewCell {
     // MARK: - Public methods
     
     func setIsLiked(isLiked: Bool)  {
-        likeButton.setImage(UIImage(named: isLiked ? "favorites_button_on" : "favorites_button_of"), for: .normal)
+        likeButton.setImage(UIImage(named: isLiked ? "favorites_button_on" : "favorites_button_off"), for: .normal)
     }
     
     // MARK: - Private methods

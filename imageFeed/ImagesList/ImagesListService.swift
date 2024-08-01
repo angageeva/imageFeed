@@ -20,7 +20,7 @@ final class ImagesListService {
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     
     private var task: URLSessionTask?
-    private var lastLoadedPage = 0
+    private var lastLoadedPage = 1
     private (set) var photos: [Photo] = []
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -91,11 +91,18 @@ final class ImagesListService {
     // Так как читать массив photos мы будем из main
     
     private func buildPhotoRequest(token: String) -> URLRequest? {
-        let url = Constants.defaultBaseURL.appendingPathComponent("/photos")
+        let photosUrl = Constants.defaultBaseURL.appendingPathComponent("/photos")
+        var components = URLComponents(url: photosUrl, resolvingAgainstBaseURL: true)
+        components?.queryItems = [URLQueryItem(name: "page", value: String(lastLoadedPage))]
+
+        guard let url = components?.url else {
+            assertionFailure("Failed to create URL with query parameters")
+            return nil
+        }
+
         var request = URLRequest(url: url)
-        
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        
+
         return request
     }
     
@@ -110,16 +117,17 @@ final class ImagesListService {
         request.httpMethod = isLike ? "POST" : "DELETE"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         
-        let urlSessionTask = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<Data, Error>) in
+        let urlSessionTask = URLSession.shared.data(for: request) { [weak self] result in
             guard let self = self else { return }
             //скореее всего должен быть main.assync
             //в учебнике предлагают делать копию всего элемента и заменять
             switch result {
             case .success:
                 if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
-                    self.photos[index].isLiked = isLike
+                    self.photos[index].isLiked = !isLike
                     completion(.success(nil))
                 }
+                print(self.photos)
             case .failure(let error):
                 completion(.failure(error))
             }
