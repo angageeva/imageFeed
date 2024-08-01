@@ -14,6 +14,7 @@ final class ProfileViewController: UIViewController {
     private let oAuthTokenStorage = OAuth2TokenStorage()
     private let imageView = UIImageView()
     private let profileService = ProfileService.shared
+    private let profileLogoutService = ProfileLogoutService.shared
     
     private let nameLabel = UILabel()
     private let nickLabel = UILabel()
@@ -123,6 +124,29 @@ final class ProfileViewController: UIViewController {
         button.heightAnchor.constraint(equalToConstant: 22).isActive = true
         button.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
         button.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -26).isActive = true
+        
+        button.addTarget(self, action: #selector(exitButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc private func exitButtonTapped() {
+        //
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены, что хотите выйти?",
+            preferredStyle: .alert
+        )
+        
+        let actionLogout = UIAlertAction(title: "Да", style: .default) { _ in
+            self.profileLogoutService.logout()
+            // Возвращаемся на SplashViewController
+            if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+                window.rootViewController = SplashViewController()
+            }
+        }
+        alert.addAction(actionLogout)
+        alert.addAction(UIAlertAction(title: "Нет", style: .cancel, handler: nil))
+        
+        present(alert, animated: true, completion: nil)
     }
     
     private func updateProfileDetails(profile: Profile) {
