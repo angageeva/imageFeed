@@ -1,0 +1,56 @@
+import Foundation
+import WebKit
+
+// MARK: - ProfileLogoutService
+
+final class ProfileLogoutService {
+    
+    // MARK: - Properties
+
+    static let shared = ProfileLogoutService()
+    
+    private let oAuthTokenStorage = OAuth2TokenStorage()
+    private let profileImageService = ProfileImageService.shared
+    private let imagesListService = ImagesListService.shared
+    private let profileService = ProfileService.shared
+    
+    private init() { }
+    
+    // MARK: - Public methods
+    
+    func logout() {
+        UIBlockingProgressHUD.show()
+        
+        cleanProfileCredentials()
+        cleanProfileData()
+        
+        UIBlockingProgressHUD.dismiss()
+    }
+    
+    // MARK: - Private methods
+    
+    private func cleanProfileCredentials() {
+        cleanToken()
+        cleanCookies()
+    }
+    
+    private func cleanProfileData() {
+        profileImageService.cleanProfileImage()
+        imagesListService.cleanPhotos()
+        profileService.cleanProfile()
+    }
+    
+    private func cleanCookies() {
+        HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+        WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+            records.forEach { record in
+                WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
+            }
+        }
+    }
+    
+    private func cleanToken() {
+        oAuthTokenStorage.token = nil
+    }
+}
+

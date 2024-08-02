@@ -7,13 +7,12 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - Properties
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
+    override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
     
     private let oAuthTokenStorage = OAuth2TokenStorage()
     private let imageView = UIImageView()
     private let profileService = ProfileService.shared
+    private let profileLogoutService = ProfileLogoutService.shared
     
     private let nameLabel = UILabel()
     private let nickLabel = UILabel()
@@ -25,6 +24,7 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = .ypBlack
 
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(
@@ -123,12 +123,12 @@ final class ProfileViewController: UIViewController {
         button.heightAnchor.constraint(equalToConstant: 22).isActive = true
         button.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
         button.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -26).isActive = true
-    }
-    
-    private func updateProfileDetails(profile: Profile) {
-        nameLabel.text = profile.name
-        descriptionLabel.text = profile.bio ?? ""
-        nickLabel.text = profile.loginName
+        
+        button.addTarget(
+            self,
+            action: #selector(exitButtonHandler),
+            for: .touchUpInside
+        )
     }
     
     private func updateAvatar() {
@@ -152,5 +152,32 @@ final class ProfileViewController: UIViewController {
                 print("[ProfileViewController -> updateAvatar]: Error loading image: \(error)")
             }
         }
+    }
+    
+    @objc private func exitButtonHandler() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены, что хотите выйти?",
+            preferredStyle: .alert
+        )
+        
+        let actionLogout = UIAlertAction(title: "Да", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            self.profileLogoutService.logout()
+
+            if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+                window.rootViewController = SplashViewController()
+            }
+        }
+        alert.addAction(actionLogout)
+        alert.addAction(UIAlertAction(title: "Нет", style: .cancel, handler: nil))
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    private func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name
+        descriptionLabel.text = profile.bio ?? ""
+        nickLabel.text = profile.loginName
     }
 }

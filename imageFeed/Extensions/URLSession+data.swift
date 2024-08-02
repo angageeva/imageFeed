@@ -57,8 +57,6 @@ extension URLSession {
         for request: URLRequest,
         completion: @escaping (Result<T, Error>) -> Void
     ) -> URLSessionTask {
-//        let decoder = JSONDecoder()
-//        decoder.keyDecodingStrategy = .convertFromSnakeCase
         let decoder = URLSession.sharedDecoder
 
         let task = data(for: request) { result in

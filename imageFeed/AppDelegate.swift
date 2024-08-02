@@ -1,11 +1,14 @@
 import UIKit
-import SwiftKeychainWrapper
+import ProgressHUD
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //Override point for customization after application launch.
-        KeychainWrapper.standard.removeObject(forKey: OAuth2TokenStorage.Keys.token.rawValue)
+        ProgressHUD.animationType = .systemActivityIndicator
+        ProgressHUD.colorHUD = .black
+        ProgressHUD.colorAnimation = .lightGray
+
         return true
     }
 
@@ -16,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         configurationForConnecting connectingSceneSession: UISceneSession,
         options: UIScene.ConnectionOptions
     ) -> UISceneConfiguration {
-        let sceneConfiguration = UISceneConfiguration(         
+        let sceneConfiguration = UISceneConfiguration(
             name: "Main",
             sessionRole: connectingSceneSession.role
         )

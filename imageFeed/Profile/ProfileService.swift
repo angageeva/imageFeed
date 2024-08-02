@@ -62,6 +62,12 @@ final class ProfileService {
         urlSessionTask.resume()
     }
     
+    // MARK: - Public methods
+    
+    func cleanProfile() {
+        profile = nil
+    }
+    
     // MARK: - Private methods
 
     private func buildProfileDataRequest(token: String) -> URLRequest? {

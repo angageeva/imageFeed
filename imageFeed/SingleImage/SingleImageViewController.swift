@@ -6,17 +6,9 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
 
     // MARK: - Properties
 
-    var image: UIImage! {
-        didSet {
-            guard isViewLoaded, let image else { return }
+    var photo: Photo?
     
-            setImage(image: image)
-        }
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
+    override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
     @IBOutlet weak private var imageView: UIImageView!
     @IBOutlet weak private var scrollView: UIScrollView!
@@ -29,12 +21,12 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        guard let photo = photo else { return }
 
         scrollView.minimumZoomScale = minimumZoomScale
         scrollView.maximumZoomScale = maximumZoomScale
 
-        guard let image = image else { return }
-        setImage(image: image)
+        setImage(photo: photo)
     }
     
     // MARK: - Public methods
@@ -50,7 +42,7 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
     }
     
     @IBAction private func didTapShareButton(_ sender: UIButton) {
-        guard let image else { return }
+        guard let image = imageView.image else { return }
 
         let shared = UIActivityViewController(
             activityItems: [image],
@@ -62,14 +54,14 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
     // MARK: private methods
     
     // function for rescaling and centering Image in SingleImageView
-    private func rescaleAndCenterImageInScrollView(image: UIImage) {
+    private func rescaleAndCenterImageInScrollView() {
         let minZoomScale = scrollView.minimumZoomScale
         let maxZoomScale = scrollView.maximumZoomScale
 
         view.layoutIfNeeded()
 
         let visibleRectSize = scrollView.bounds.size
-        let imageSize = image.size
+        let imageSize = imageView.frame.size
 
         let hScale = visibleRectSize.width/imageSize.width
         let vScale = visibleRectSize.height/imageSize.height
@@ -85,10 +77,37 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
 
-    private func setImage(image: UIImage) {
-        imageView.image = image
-        imageView.frame.size = image.size
+    private func setImage(photo: Photo) {
+        UIBlockingProgressHUD.show()
+        imageView.frame.size = photo.size
 
-        rescaleAndCenterImageInScrollView(image: image)
+        imageView.kf.setImage(with: URL(string: photo.fullImageURL), placeholder: UIImage(named: "scribble_placeholder")) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            
+            guard let self = self else { return }
+
+            switch result {
+            case .success:
+                self.rescaleAndCenterImageInScrollView()
+            case .failure:
+                print("[SingleImageViewController -> setImage]: Error loading photo from url: \(photo.fullImageURL)")
+                self.showError(photo: photo)
+            }
+        }
     }
+    
+    private func showError(photo: Photo) {
+            let alert = UIAlertController(
+                title: "Ошибка",
+                message: "Что-то пошло не так. Попробовать ещё раз?",
+                preferredStyle: .alert
+            )
+            
+            alert.addAction(UIAlertAction(title: "Не надо", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+                self?.setImage(photo: photo)
+            })
+            
+            present(alert, animated: true, completion: nil)
+        }
 }

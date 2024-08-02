@@ -5,7 +5,7 @@ import UIKit
 final class ImagesListViewController: UIViewController {
     
     // MARK: - Properties
-
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
@@ -13,22 +13,27 @@ final class ImagesListViewController: UIViewController {
     let showSingleImageSegueIdentifier = "ShowSingleImage"
     let imageFeedLog = ImageFeedLog()
     let photoNames: [String] = Array(0..<20).map{ "\($0)" }
-
+    let imagesListService = ImagesListService.shared
+    
+    var photos: [Photo] = []
+    
     private let topInset: CGFloat = 12
     private let bottomInset: CGFloat = 8
     private let leftInset: CGFloat = 0
     private let rightInset: CGFloat = 0
     private let photoDateFormat = "dd MMMM yyyy"
     
-    @IBOutlet private var tableView: UITableView!
-
+    @IBOutlet var tableView: UITableView!
+    
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = photoDateFormat
         formatter.locale = Locale(identifier: "ru_RU")
         return formatter
     }()
-
+    
+    private var imagesListServiceObserver: NSObjectProtocol?
+    
     func getFormattedDate() -> String {
         dateFormatter.string(from: Date())
     }
@@ -37,12 +42,22 @@ final class ImagesListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        tableView.contentInset = UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
+        
+        imagesListServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ImagesListService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                
+                self.updateTableViewAnimated()
+            }
+        imagesListService.fetchPhotosNextPage()
     }
-
+    
     // MARK: - Public methods
-
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard
             segue.identifier == showSingleImageSegueIdentifier,
@@ -53,8 +68,22 @@ final class ImagesListViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
             return
         }
-        let image = UIImage(named: photoNames[indexPath.row])
-
-        viewController.image = image
+        let selectedPhoto = photos[indexPath.row]
+        
+        viewController.photo = selectedPhoto
+    }
+    
+    private func updateTableViewAnimated() {
+        let oldCount = photos.count
+        let newCount = imagesListService.photos.count
+        let indexPaths = (oldCount..<newCount).map { IndexPath(row: $0, section: 0) }
+        
+        photos = imagesListService.photos
+        
+        if oldCount != newCount {
+            tableView.performBatchUpdates {
+                tableView.insertRows(at: indexPaths, with: .automatic)
+            } completion: { _ in }
+        }
     }
 }
