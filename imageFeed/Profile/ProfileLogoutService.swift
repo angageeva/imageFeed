@@ -14,13 +14,21 @@ final class ProfileLogoutService {
     func logout() {
         UIBlockingProgressHUD.show()
         
-        cleanCookies()
+        cleanProfileCredentials()
+        cleanProfileData()
+        
+        UIBlockingProgressHUD.dismiss()
+    }
+    
+    private func cleanProfileCredentials() {
         cleanToken()
+        cleanCookies()
+    }
+    
+    private func cleanProfileData() {
         profileImageService.cleanProfileImage()
         imagesListService.cleanPhotos()
         profileService.cleanProfile()
-        
-        UIBlockingProgressHUD.dismiss()
     }
     
     private func cleanCookies() {

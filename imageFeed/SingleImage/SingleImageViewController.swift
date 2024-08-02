@@ -23,11 +23,11 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        guard let photo = photo else { return }
 
         scrollView.minimumZoomScale = minimumZoomScale
         scrollView.maximumZoomScale = maximumZoomScale
 
-        guard let photo = photo else { return }
         setImage(photo: photo)
     }
     
@@ -92,7 +92,6 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
             case .success:
                 self.rescaleAndCenterImageInScrollView()
             case .failure:
-                print("error")
                 print("[SingleImageViewController -> setImage]: Error loading photo from url: \(photo.fullImageURL)")
                 self.showError(photo: photo)
             }

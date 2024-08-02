@@ -4,11 +4,6 @@ import UIKit
 
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-// shall we check?
-//        guard photos[indexPath.row]) != nil else {
-//            imageFeedLog.logError("Couldn't find the image")
-//            return 0
-//        }
         let image = photos[indexPath.row]
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
@@ -68,7 +63,6 @@ extension ImagesListViewController: ImagesListCellDelegate {
             case .success:
                 self.photos = self.imagesListService.photos
                 cell.setIsLiked(isLiked: self.photos[indexPath.row].isLiked)
-                print(photo.id)
                 UIBlockingProgressHUD.dismiss()
             case .failure:
                 UIBlockingProgressHUD.dismiss()
@@ -78,17 +72,20 @@ extension ImagesListViewController: ImagesListCellDelegate {
     }
     
     private func showAlert() {
-        let alertController = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось войти в систему", preferredStyle: .alert)
+        let alertController = UIAlertController(
+            title: "Что-то пошло не так(",
+            message: "Не удалось войти в систему",
+            preferredStyle: .alert
+        )
         let action = UIAlertAction(title: "Ок", style: .default, handler: nil)
-        
         alertController.addAction(action)
+
         present(alertController, animated: true, completion: nil)
     }
 }
 
 extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
- //       guard let image = UIImage(named: "\(indexPath.row)") else { return }
         let image = photos[indexPath.row]
 
         guard let url = URL(string: image.thumbImageURL) else { return }
@@ -96,9 +93,7 @@ extension ImagesListViewController {
         cell.cellImage.kf.indicatorType = .activity
         cell.cellImage.kf.setImage(with: url, placeholder: UIImage(named: "sribble_placeholder"))
         
-        //cell.cellImage.image = image
         cell.dateLabel.text = getFormattedDate()
-        //cell.likeButton.setImage(cellFavoriteImage(index: indexPath.row), for: .normal)
 
         let gradient = cellGradient()
 
@@ -106,13 +101,6 @@ extension ImagesListViewController {
         cell.gradientLayerView.layer.insertSublayer(gradient, at: 0)
         cell.gradientLayer = gradient
     }
-
-//    func cellFavoriteImage(index: Int) -> UIImage? {
-//        let isEven = index % 2 == 0
-//        let buttonImage = isEven ? UIImage(named: "favorites_button_on") : UIImage(named: "favorites_button_off")
-//
-//        return buttonImage
-//    }
 
     func cellGradient() -> CAGradientLayer {
         let gradient = CAGradientLayer()

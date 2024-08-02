@@ -1,16 +1,6 @@
 import Foundation
 import UIKit
 
-struct Photo {
-    let id: String
-    let size: CGSize
-    let createdAt: Date?
-    let welcomeDescription: String?
-    let thumbImageURL: String
-    let fullImageURL: String
-    var isLiked: Bool
-}
-
 final class ImagesListService {
     static let shared = ImagesListService()
     
@@ -26,6 +16,7 @@ final class ImagesListService {
         let formatter = DateFormatter()
         formatter.dateFormat = photoDateFormat
         formatter.locale = Locale(identifier: "ru_RU")
+
         return formatter
     }()
     
@@ -44,10 +35,8 @@ final class ImagesListService {
             print("[ImagesListService -> fetchPhotosNextPage]: Invalid request.")
             return
         }
-        
         lastLoadedPage += 1
-        
-        // return to code [weak self], not working without
+
         let urlSessionTask = URLSession.shared.objectTask(for: photoRequest) { [weak self] (result: Result<[PhotoResult], Error>) in
             guard let self = self else {
                 return }
@@ -66,12 +55,10 @@ final class ImagesListService {
                     
                     self.photos.append(contentsOf: photoGroup)
                     
-                    
                     NotificationCenter.default
                         .post(
                             name: ImagesListService.didChangeNotification,
                             object: self)
-                    
                     
                     self.task = nil
                 case .failure(let error):
@@ -84,11 +71,38 @@ final class ImagesListService {
         urlSessionTask.resume()
     }
     
+    func cleanPhotos() {
+        photos = []
+    }
     
-    
-    //let nextPage = (lastLoadedPage ?? 0) + 1
-    //Добавить свойство task: URLSessionTask? (сохраняем в нём результат urlSession.objectTask), и если task != nil, то сетевой запрос в прогрессе.
-    // Так как читать массив photos мы будем из main
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void?, Error>) -> Void) {
+        guard let token = oAuthTokenStorage.token else {
+            print("[ImagesListService -> changeLike]: Inavlid token")
+            return
+        }
+        
+        let url = Constants.defaultBaseURL.appendingPathComponent("/photos/\(photoId)/like")
+        var request = URLRequest(url: url)
+        request.httpMethod = isLike ? "POST" : "DELETE"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        let urlSessionTask = URLSession.shared.data(for: request) { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .success:
+                if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
+                    self.photos[index].isLiked = !isLike
+
+                    completion(.success(nil))
+                }
+                print(self.photos)
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+        urlSessionTask.resume()
+    }
     
     private func buildPhotoRequest(token: String) -> URLRequest? {
         let photosUrl = Constants.defaultBaseURL.appendingPathComponent("/photos")
@@ -104,39 +118,6 @@ final class ImagesListService {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
         return request
-    }
-    
-    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void?, Error>) -> Void) {
-        guard let token = oAuthTokenStorage.token else {
-            print("[ImagesListService]: Inavlid token.")
-            return
-        }
-        
-        let url = Constants.defaultBaseURL.appendingPathComponent("/photos/\(photoId)/like")
-        var request = URLRequest(url: url)
-        request.httpMethod = isLike ? "POST" : "DELETE"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        
-        let urlSessionTask = URLSession.shared.data(for: request) { [weak self] result in
-            guard let self = self else { return }
-            //скореее всего должен быть main.assync
-            //в учебнике предлагают делать копию всего элемента и заменять
-            switch result {
-            case .success:
-                if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
-                    self.photos[index].isLiked = !isLike
-                    completion(.success(nil))
-                }
-                print(self.photos)
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-        urlSessionTask.resume()
-    }
-    
-    func cleanPhotos() {
-        photos = []
     }
 }
 

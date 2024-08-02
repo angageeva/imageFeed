@@ -26,6 +26,7 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = .ypBlack
 
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(
@@ -125,34 +126,11 @@ final class ProfileViewController: UIViewController {
         button.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
         button.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -26).isActive = true
         
-        button.addTarget(self, action: #selector(exitButtonTapped), for: .touchUpInside)
-    }
-    
-    @objc private func exitButtonTapped() {
-        //
-        let alert = UIAlertController(
-            title: "Пока, пока!",
-            message: "Уверены, что хотите выйти?",
-            preferredStyle: .alert
+        button.addTarget(
+            self,
+            action: #selector(exitButtonHandler),
+            for: .touchUpInside
         )
-        
-        let actionLogout = UIAlertAction(title: "Да", style: .default) { _ in
-            self.profileLogoutService.logout()
-            // Возвращаемся на SplashViewController
-            if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
-                window.rootViewController = SplashViewController()
-            }
-        }
-        alert.addAction(actionLogout)
-        alert.addAction(UIAlertAction(title: "Нет", style: .cancel, handler: nil))
-        
-        present(alert, animated: true, completion: nil)
-    }
-    
-    private func updateProfileDetails(profile: Profile) {
-        nameLabel.text = profile.name
-        descriptionLabel.text = profile.bio ?? ""
-        nickLabel.text = profile.loginName
     }
     
     private func updateAvatar() {
@@ -176,5 +154,31 @@ final class ProfileViewController: UIViewController {
                 print("[ProfileViewController -> updateAvatar]: Error loading image: \(error)")
             }
         }
+    }
+    
+    @objc private func exitButtonHandler() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены, что хотите выйти?",
+            preferredStyle: .alert
+        )
+        
+        let actionLogout = UIAlertAction(title: "Да", style: .default) { _ in
+            self.profileLogoutService.logout()
+
+            if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+                window.rootViewController = SplashViewController()
+            }
+        }
+        alert.addAction(actionLogout)
+        alert.addAction(UIAlertAction(title: "Нет", style: .cancel, handler: nil))
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    private func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name
+        descriptionLabel.text = profile.bio ?? ""
+        nickLabel.text = profile.loginName
     }
 }

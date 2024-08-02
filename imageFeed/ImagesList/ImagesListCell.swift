@@ -43,7 +43,10 @@ final class ImagesListCell: UITableViewCell {
     // MARK: - Public methods
     
     func setIsLiked(isLiked: Bool)  {
-        likeButton.setImage(UIImage(named: isLiked ? "favorites_button_on" : "favorites_button_off"), for: .normal)
+        likeButton.setImage(
+            UIImage(named: isLiked ? "favorites_button_on" : "favorites_button_off"),
+            for: .normal
+        )
     }
     
     // MARK: - Private methods
