@@ -12,13 +12,9 @@ final class ImagesListService {
     private var task: URLSessionTask?
     private var lastLoadedPage = 1
     private (set) var photos: [Photo] = []
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = photoDateFormat
-        formatter.locale = Locale(identifier: "ru_RU")
-
-        return formatter
-    }()
+    private lazy var dateFormatter: ISO8601DateFormatter = {
+        ISO8601DateFormatter()
+    } ()
     
     func fetchPhotosNextPage() {
         if self.task != nil {

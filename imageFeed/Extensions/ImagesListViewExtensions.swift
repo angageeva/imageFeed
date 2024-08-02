@@ -93,7 +93,7 @@ extension ImagesListViewController {
         cell.cellImage.kf.indicatorType = .activity
         cell.cellImage.kf.setImage(with: url, placeholder: UIImage(named: "sribble_placeholder"))
         
-        cell.dateLabel.text = getFormattedDate()
+        cell.dateLabel.text = image.createdAt != nil ? getFormattedDate() : ""
 
         let gradient = cellGradient()
 
