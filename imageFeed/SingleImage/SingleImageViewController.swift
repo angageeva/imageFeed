@@ -6,11 +6,9 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
 
     // MARK: - Properties
 
-    var photo: Photo!
+    var photo: Photo?
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
+    override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
     @IBOutlet weak private var imageView: UIImageView!
     @IBOutlet weak private var scrollView: UIScrollView!
@@ -83,7 +81,7 @@ final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
         UIBlockingProgressHUD.show()
         imageView.frame.size = photo.size
 
-        imageView.kf.setImage(with: URL(string: photo.fullImageURL)) { [weak self] result in
+        imageView.kf.setImage(with: URL(string: photo.fullImageURL), placeholder: UIImage(named: "scribble_placeholder")) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
             
             guard let self = self else { return }

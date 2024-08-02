@@ -1,5 +1,7 @@
 import Foundation
 
+//MARK: - Photo
+
 struct Photo {
     let id: String
     let size: CGSize

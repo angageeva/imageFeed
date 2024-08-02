@@ -7,9 +7,7 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - Properties
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
+    override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
     
     private let oAuthTokenStorage = OAuth2TokenStorage()
     private let imageView = UIImageView()

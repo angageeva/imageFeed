@@ -1,7 +1,12 @@
 import Foundation
 import UIKit
 
+// MARK: - ImagesListService
+
 final class ImagesListService {
+    
+    // MARK: - Properties
+    
     static let shared = ImagesListService()
     
     private let photoDateFormat = "dd MMMM yyyy"
@@ -15,6 +20,8 @@ final class ImagesListService {
     private lazy var dateFormatter: ISO8601DateFormatter = {
         ISO8601DateFormatter()
     } ()
+    
+    // MARK: - Public methods
     
     func fetchPhotosNextPage() {
         if self.task != nil {
@@ -99,6 +106,8 @@ final class ImagesListService {
         }
         urlSessionTask.resume()
     }
+    
+    // MARK: - Private methods
     
     private func buildPhotoRequest(token: String) -> URLRequest? {
         let photosUrl = Constants.defaultBaseURL.appendingPathComponent("/photos")

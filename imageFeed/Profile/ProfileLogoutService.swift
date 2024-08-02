@@ -1,7 +1,12 @@
 import Foundation
 import WebKit
 
+// MARK: - ProfileLogoutService
+
 final class ProfileLogoutService {
+    
+    // MARK: - Properties
+
     static let shared = ProfileLogoutService()
     
     private let oAuthTokenStorage = OAuth2TokenStorage()
@@ -11,6 +16,8 @@ final class ProfileLogoutService {
     
     private init() { }
     
+    // MARK: - Public methods
+    
     func logout() {
         UIBlockingProgressHUD.show()
         
@@ -19,6 +26,8 @@ final class ProfileLogoutService {
         
         UIBlockingProgressHUD.dismiss()
     }
+    
+    // MARK: - Private methods
     
     private func cleanProfileCredentials() {
         cleanToken()
