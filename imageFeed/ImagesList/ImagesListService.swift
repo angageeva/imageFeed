@@ -11,15 +11,17 @@ final class ImagesListService {
     
     private let photoDateFormat = "dd MMMM yyyy"
     private let oAuthTokenStorage = OAuth2TokenStorage()
+    private let dateFormatter: ISO8601DateFormatter = {
+        ISO8601DateFormatter()
+    } ()
     
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     
     private var task: URLSessionTask?
     private var lastLoadedPage = 1
     private (set) var photos: [Photo] = []
-    private lazy var dateFormatter: ISO8601DateFormatter = {
-        ISO8601DateFormatter()
-    } ()
+    
+    private init() {}
     
     // MARK: - Public methods
     

@@ -161,7 +161,8 @@ final class ProfileViewController: UIViewController {
             preferredStyle: .alert
         )
         
-        let actionLogout = UIAlertAction(title: "Да", style: .default) { _ in
+        let actionLogout = UIAlertAction(title: "Да", style: .default) { [weak self] _ in
+            guard let self = self else { return }
             self.profileLogoutService.logout()
 
             if let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {

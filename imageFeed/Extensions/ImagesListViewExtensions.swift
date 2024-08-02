@@ -32,7 +32,7 @@ extension ImagesListViewController: UITableViewDelegate {
 
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return photos.count
+       photos.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -58,20 +58,20 @@ extension ImagesListViewController: ImagesListCellDelegate {
         UIBlockingProgressHUD.show()
         
         imagesListService.changeLike(photoId: photo.id, isLike: photo.isLiked) {
-            result in
+            [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .success:
                 self.photos = self.imagesListService.photos
                 cell.setIsLiked(isLiked: self.photos[indexPath.row].isLiked)
-                UIBlockingProgressHUD.dismiss()
             case .failure:
-                UIBlockingProgressHUD.dismiss()
-                self.showAlert()
+                self.showErrorAlert()
             }
+            UIBlockingProgressHUD.dismiss()
         }
     }
     
-    private func showAlert() {
+    private func showErrorAlert() {
         let alertController = UIAlertController(
             title: "Что-то пошло не так(",
             message: "Не удалось войти в систему",
@@ -86,6 +86,8 @@ extension ImagesListViewController: ImagesListCellDelegate {
 
 extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
+        guard indexPath.row < photos.count else { return }
+        
         let image = photos[indexPath.row]
 
         guard let url = URL(string: image.thumbImageURL) else { return }
