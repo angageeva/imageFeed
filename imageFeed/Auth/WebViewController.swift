@@ -8,18 +8,27 @@ protocol WebViewControllerDelegate: AnyObject {
     func webViewViewControllerDidCancel(_ vc: WebViewController)
 }
 
-final class WebViewController: UIViewController {
+public protocol WebViewViewControllerProtocol: AnyObject {
+    var presenter: WebViewPresenterProtocol? { get set }
+    func load(request: URLRequest)
+    func setProgressValue(_ newValue: Float)
+    func setProgressHidden(_ isHidden: Bool)
+}
+
+final class WebViewController: UIViewController & WebViewViewControllerProtocol {
     
     // MARK: - Properties
     
     weak var delegate: WebViewControllerDelegate?
+    var presenter: WebViewPresenterProtocol?
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .darkContent
     }
     
+    //static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+    
     private let unsplashOAuthNativeURL = "/oauth/authorize/native"
-    private static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
     private var estimatedProgressObservation: NSKeyValueObservation?
 
     @IBOutlet weak private var webView: WKWebView!
@@ -30,67 +39,47 @@ final class WebViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        loadAuthView()
-        updateProgress()
-        
+        presenter?.viewDidLoad()
+        webView.navigationDelegate = self
+        //updateProgress()
+        //а с этим теперь ваще что делать? О_о
         estimatedProgressObservation = webView.observe(
             \.estimatedProgress,
              options: [],
              changeHandler: { [weak self] _, _ in
                  guard let self = self else { return }
-
-                 self.updateProgress()
              })
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == #keyPath(WKWebView.estimatedProgress) {
+            presenter?.didUpdateProgressValue(webView.estimatedProgress)
+        } else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+        }
+    } 
+    
+    // MARK: - Public methods
+    
+    func load(request: URLRequest) {
+        webView.load(request)
     }
 
     // MARK: - Private methods
     
-    private func loadAuthView() {
-        guard let request = buildAuthorizeURL() else {
-            print("Can't form the authorize url!")
-            return
-        }
-
-        webView.load(request)
-        webView.navigationDelegate = self
-    }
-    
-    private func buildAuthorizeURL() -> URLRequest? {
-        guard var urlComponents = URLComponents(string: WebViewController.unsplashAuthorizeURLString) else {
-            print("Can't initial the urlComponents!")
-            return nil
-        }
-        urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: Constants.accessKey),
-            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
-            URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "scope", value: Constants.accessScope)
-        ]
-        
-        guard let url = urlComponents.url else {
-            print("Can't form the url!")
-            return nil
-        }
-        return URLRequest(url: url)
-    }
-    
     private func code(from navigationAction: WKNavigationAction) -> String? {
-        if
-            let url = navigationAction.request.url,
-            let urlComponents = URLComponents(string: url.absoluteString),
-            urlComponents.path == unsplashOAuthNativeURL,
-            let items = urlComponents.queryItems,
-            let codeItem = items.first(where: {$0.name == "code"})
-        {
-            return codeItem.value
-        } else {
-            return nil
+        if let url = navigationAction.request.url {
+            return presenter?.code(from: url)
         }
+        return nil
     }
     
-    private func updateProgress() {
-        progressView.progress = Float(webView.estimatedProgress)
-        progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
+    func setProgressValue(_ newValue: Float) {
+        progressView.progress = newValue
+    }
+    
+    func setProgressHidden(_ isHidden: Bool) {
+        progressView.isHidden = isHidden
     }
 }
 

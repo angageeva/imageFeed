@@ -40,6 +40,11 @@ final class AuthViewController: UIViewController {
                 print("[AuthViewController -> prepare]: Error in webViewController segue destination setup")
                 return
             }
+            let authHelper = AuthHelper()
+            let webViewPresenter = WebViewPresenter(authHelper: authHelper)
+            webViewController.presenter = webViewPresenter
+            webViewPresenter.view = webViewController
+            webViewController.delegate = self
             webViewController.delegate = self
         } else {
             super.prepare(for: segue, sender: sender)
