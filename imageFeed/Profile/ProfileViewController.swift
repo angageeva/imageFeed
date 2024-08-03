@@ -4,7 +4,7 @@ import Kingfisher
 // MARK: ProfileViewController
 
 public protocol ProfileViewControllerProtocol: AnyObject {
-    var presenter: WebViewPresenterProtocol? { get set }
+    var presenter: ProfileViewPresenterProtocol? { get set }
     func updateAvatar(imageURL: URL)
 }
 
@@ -13,7 +13,7 @@ final class ProfileViewController: UIViewController & ProfileViewControllerProto
     // MARK: - Properties
     
     override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
-    var presenter: WebViewPresenterProtocol?
+    var presenter: ProfileViewPresenterProtocol?
     
     private let oAuthTokenStorage = OAuth2TokenStorage()
     private let imageView = UIImageView()
@@ -31,27 +31,14 @@ final class ProfileViewController: UIViewController & ProfileViewControllerProto
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .ypBlack
-        presenter.view = self
         presenter?.viewDidLoad()
-
-//        profileImageServiceObserver = NotificationCenter.default
-//            .addObserver(
-//                forName: ProfileImageService.didChangeNotification,
-//                object: nil,
-//                queue: .main
-//            ) { [weak self] _ in
-//                guard let self = self else { return }
-//
-//                self.updateAvatar()
-//            }
-//        updateAvatar()
         addProfileImage()
         addExitButton()
         addLabels()
-
-        if let profile = profileService.profile {
-            updateProfileDetails(profile: profile)
-        }
+        
+        guard let profile = presenter?.currentProfile() else { return }
+        updateProfileDetails(profile: profile)
+        
     }
     
     // MARK: - Private methods
@@ -140,15 +127,10 @@ final class ProfileViewController: UIViewController & ProfileViewControllerProto
     }
     
     func updateAvatar(imageURL: URL) {
-//        guard
-//            let profileImageURL = ProfileImageService.shared.avatarURL,
-//            let url = URL(string: profileImageURL)
-//        else { return }
-//
         let processor = RoundCornerImageProcessor(cornerRadius: 35)
 
         imageView.kf.indicatorType = .activity
-        imageView.kf.setImage(with: url,
+        imageView.kf.setImage(with: imageURL,
                               placeholder: UIImage(named: "placeholder.png"),
                               options: [
                                 .processor(processor),

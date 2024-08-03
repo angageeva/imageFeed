@@ -4,12 +4,14 @@ public protocol ProfileViewPresenterProtocol {
     var view: ProfileViewControllerProtocol? { get set }
     func viewDidLoad()
     func loadAvatar()
+    func currentProfile() -> Profile?
 }
 
 final class ProfileViewPresenter: ProfileViewPresenterProtocol {
     var view: ProfileViewControllerProtocol?
     
     private let profileLogoutService = ProfileLogoutService.shared
+    private let profileService = ProfileService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
     
     func viewDidLoad() {
@@ -33,5 +35,9 @@ final class ProfileViewPresenter: ProfileViewPresenterProtocol {
         else { return }
         
         view?.updateAvatar(imageURL: url)
+    }
+    
+    func currentProfile() -> Profile? {
+        profileService.profile
     }
 }
