@@ -9,7 +9,7 @@ struct ProfileResult: Decodable {
     let bio: String?
 }
 
-final class ProfileService {
+public class ProfileService {
     
     // MARK: - Properties
     

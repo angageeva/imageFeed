@@ -31,7 +31,10 @@ final class ProfileViewController: UIViewController & ProfileViewControllerProto
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .ypBlack
+
+        presenter?.profileService = profileService
         presenter?.viewDidLoad()
+
         addProfileImage()
         addExitButton()
         addLabels()

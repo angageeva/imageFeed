@@ -2,6 +2,7 @@ import Foundation
 
 public protocol ProfileViewPresenterProtocol {
     var view: ProfileViewControllerProtocol? { get set }
+    var profileService: ProfileService? { get set }
     func viewDidLoad()
     func loadAvatar()
     func currentProfile() -> Profile?
@@ -9,22 +10,12 @@ public protocol ProfileViewPresenterProtocol {
 
 final class ProfileViewPresenter: ProfileViewPresenterProtocol {
     var view: ProfileViewControllerProtocol?
+    var profileService: ProfileService?
     
     private let profileLogoutService = ProfileLogoutService.shared
-    private let profileService = ProfileService.shared
-    private var profileImageServiceObserver: NSObjectProtocol?
     
     func viewDidLoad() {
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                guard let self = self else { return }
-                
-                loadAvatar()
-            }
+        addNotificationCenterObserver()
         loadAvatar()
     }
     
@@ -38,6 +29,20 @@ final class ProfileViewPresenter: ProfileViewPresenterProtocol {
     }
     
     func currentProfile() -> Profile? {
-        profileService.profile
+        guard let profile = profileService?.profile else { return nil }
+
+        return profile
+    }
+    
+    private func addNotificationCenterObserver() {
+        NotificationCenter.default.addObserver(
+            forName: ProfileImageService.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            
+            loadAvatar()
+        }
     }
 }
