@@ -2,7 +2,14 @@ import UIKit
 
 // MARK: - ImagesListViewController
 
-final class ImagesListViewController: UIViewController {
+public protocol ImagesListViewControllerProtocol: AnyObject {
+    var presenter: ImagesListViewPresenterProtocol? {get set}
+    var shownPhotosCount: Int { get }
+
+    func updateTableViewAnimated()
+}
+
+final class ImagesListViewController: UIViewController & ImagesListViewControllerProtocol {
     
     // MARK: - Properties
     
@@ -13,47 +20,31 @@ final class ImagesListViewController: UIViewController {
     let showSingleImageSegueIdentifier = "ShowSingleImage"
     let imageFeedLog = ImageFeedLog()
     let photoNames: [String] = Array(0..<20).map{ "\($0)" }
-    let imagesListService = ImagesListService.shared
+
+    var shownPhotosCount = 0
     
-    var photos: [Photo] = []
+    // move to TabBarController
+//    lazy var presenter: ImagesListViewPresenterProtocol? = {
+//        let imagesListService = ImagesListService.shared
+//        let imagesListPresenter = ImagesListViewPresenter(imagesListService: imagesListService)
+//        return imagesListPresenter
+//    }()
+    var presenter: ImagesListViewPresenterProtocol?
     
     private let topInset: CGFloat = 12
     private let bottomInset: CGFloat = 8
     private let leftInset: CGFloat = 0
     private let rightInset: CGFloat = 0
-    private let photoDateFormat = "dd MMMM yyyy"
     
     @IBOutlet var tableView: UITableView!
-    
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = photoDateFormat
-        formatter.locale = Locale(identifier: "ru_RU")
-        return formatter
-    }()
-    
-    private var imagesListServiceObserver: NSObjectProtocol?
-    
-    func getFormattedDate() -> String {
-        dateFormatter.string(from: Date())
-    }
     
     // MARK: - Lifecycle methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        imagesListServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ImagesListService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                guard let self = self else { return }
-                
-                self.updateTableViewAnimated()
-            }
-        imagesListService.fetchPhotosNextPage()
+
+        presenter?.view = self
+        presenter?.viewDidLoad()
     }
     
     // MARK: - Public methods
@@ -62,28 +53,33 @@ final class ImagesListViewController: UIViewController {
         guard
             segue.identifier == showSingleImageSegueIdentifier,
             let viewController = segue.destination as? SingleImageViewController,
-            let indexPath = sender as? IndexPath
+            let indexPath = sender as? IndexPath,
+            let selectedPhoto = presenter?.photoByIndex(index: indexPath.row)
         else {
             assertionFailure("Invalid segue destination")
             super.prepare(for: segue, sender: sender)
             return
         }
-        let selectedPhoto = photos[indexPath.row]
-        
+
         viewController.photo = selectedPhoto
     }
     
-    private func updateTableViewAnimated() {
-        let oldCount = photos.count
-        let newCount = imagesListService.photos.count
-        let indexPaths = (oldCount..<newCount).map { IndexPath(row: $0, section: 0) }
-        
-        photos = imagesListService.photos
-        
-        if oldCount != newCount {
-            tableView.performBatchUpdates {
+    func updateTableViewAnimated() {
+        guard let viewPresenter = presenter else { return }
+        let indexPaths = viewPresenter.newPhotosIndexPaths()
+
+        if indexPaths.count > 0 {
+            self.shownPhotosCount = viewPresenter.photosCount()
+
+            self.tableView.performBatchUpdates {
                 tableView.insertRows(at: indexPaths, with: .automatic)
             } completion: { _ in }
         }
+    }
+    
+    func photos() -> [Photo] {
+        guard let photos = presenter?.newPhotos() else { return [] }
+
+        return photos
     }
 }

@@ -4,7 +4,7 @@ import UIKit
 
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let image = photos[indexPath.row]
+        guard let image = presenter?.photoByIndex(index: indexPath.row) else { return 0 }
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
         let imageWidth = image.size.width
@@ -24,15 +24,19 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row + 1 == imagesListService.photos.count {
-            imagesListService.fetchPhotosNextPage()
+        guard let photosCount = presenter?.photosCount() else { return }
+
+        if indexPath.row + 1 == photosCount {
+            presenter?.fetchPhotosNextPage()
         }
     }
 }
 
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       photos.count
+        guard let photosCount = presenter?.photosCount() else { return 0 }
+        
+        return photosCount
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -52,18 +56,21 @@ extension ImagesListViewController: UITableViewDataSource {
 
 extension ImagesListViewController: ImagesListCellDelegate {
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
-        guard let indexPath = tableView.indexPath(for: cell) else { return }
-        let photo = photos[indexPath.row]
+        guard let indexPath = tableView.indexPath(for: cell),
+              let photo = presenter?.photoByIndex(index: indexPath.row)
+        else { return }
         
         UIBlockingProgressHUD.show()
         
-        imagesListService.changeLike(photoId: photo.id, isLike: photo.isLiked) {
+        presenter?.changeLike(photoId: photo.id, isLiked: photo.isLiked) {
             [weak self] result in
             guard let self = self else { return }
+
             switch result {
             case .success:
-                self.photos = self.imagesListService.photos
-                cell.setIsLiked(isLiked: self.photos[indexPath.row].isLiked)
+                guard let photo = presenter?.photoByIndex(index: indexPath.row) else { return }
+
+                cell.setIsLiked(isLiked: photo.isLiked)
             case .failure:
                 self.showErrorAlert()
             }
@@ -86,16 +93,17 @@ extension ImagesListViewController: ImagesListCellDelegate {
 
 extension ImagesListViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        guard indexPath.row < photos.count else { return }
+        guard let photosCount = presenter?.photosCount(),
+              let image = presenter?.photoByIndex(index: indexPath.row),
+              indexPath.row < photosCount
+        else { return }
         
-        let image = photos[indexPath.row]
-
         guard let url = URL(string: image.thumbImageURL) else { return }
         
         cell.cellImage.kf.indicatorType = .activity
         cell.cellImage.kf.setImage(with: url, placeholder: UIImage(named: "sribble_placeholder"))
         
-        cell.dateLabel.text = image.createdAt != nil ? getFormattedDate() : ""
+        cell.dateLabel.text = image.createdAt != nil ? presenter?.getFormattedDate() : ""
 
         let gradient = cellGradient()
 
@@ -104,7 +112,7 @@ extension ImagesListViewController {
         cell.gradientLayer = gradient
     }
 
-    func cellGradient() -> CAGradientLayer {
+    private func cellGradient() -> CAGradientLayer {
         let gradient = CAGradientLayer()
         let finalColor = UIColor.ypBlack.withAlphaComponent(0.2)
         let startColor = UIColor.ypBlack.withAlphaComponent(0.0)

@@ -3,8 +3,15 @@ import UIKit
 
 // MARK: - ImagesListService
 
-final class ImagesListService {
-    
+protocol ImagesListServiceProtocol: AnyObject {
+    var photos: [Photo] { get }
+
+    func fetchPhotosNextPage()
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void?, Error>) -> Void)
+}
+
+final class ImagesListService: ImagesListServiceProtocol {
+
     // MARK: - Properties
     
     static let shared = ImagesListService()
@@ -88,7 +95,7 @@ final class ImagesListService {
         
         let url = Constants.defaultBaseURL.appendingPathComponent("/photos/\(photoId)/like")
         var request = URLRequest(url: url)
-        request.httpMethod = isLike ? "POST" : "DELETE"
+        request.httpMethod = isLike ? "DELETE" : "POST"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         
         let urlSessionTask = URLSession.shared.data(for: request) { [weak self] result in
@@ -101,7 +108,6 @@ final class ImagesListService {
 
                     completion(.success(nil))
                 }
-                print(self.photos)
             case .failure(let error):
                 completion(.failure(error))
             }
