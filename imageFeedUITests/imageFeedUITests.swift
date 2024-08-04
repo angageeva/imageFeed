@@ -28,10 +28,6 @@ final class Image_FeedUITests: XCTestCase {
         XCTAssertTrue(passwordTextField.waitForExistence(timeout: 5))
         
         passwordTextField.tap()
-        sleep(2)
-        passwordTextField.tap()
-        sleep(5)
-        passwordTextField.tap()
         sleep(3)
         passwordTextField.typeText("{PASSWORD}")
         app.toolbars.buttons["Done"].tap()
@@ -39,7 +35,6 @@ final class Image_FeedUITests: XCTestCase {
         
         webView.buttons["Login"].tap()
         sleep(3)
-        webView.buttons["Login"].tap()
         
         let tablesQuery = app.tables
         let cell = tablesQuery.descendants(matching: .cell).element(boundBy: 0)
@@ -89,4 +84,4 @@ final class Image_FeedUITests: XCTestCase {
         
         app.alerts["Пока, пока!"].scrollViews.otherElements.buttons["Да"].tap()
     }
-} 
+}

@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol ProfileViewPresenterProtocol {
+public protocol ProfileViewPresenterProtocol: AnyObject {
     var view: ProfileViewControllerProtocol? { get set }
     var profileService: ProfileService? { get set }
 
@@ -10,7 +10,7 @@ public protocol ProfileViewPresenterProtocol {
 }
 
 final class ProfileViewPresenter: ProfileViewPresenterProtocol {
-    var view: ProfileViewControllerProtocol?
+    weak var view: ProfileViewControllerProtocol?
     var profileService: ProfileService?
     
     private let profileLogoutService = ProfileLogoutService.shared

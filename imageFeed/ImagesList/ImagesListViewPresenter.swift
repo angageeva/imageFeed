@@ -33,7 +33,6 @@ final class ImagesListViewPresenter: ImagesListViewPresenterProtocol {
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = photoDateFormat
-        formatter.locale = Locale(identifier: "ru_RU")
         return formatter
     }()
     
