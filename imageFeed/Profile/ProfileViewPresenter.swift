@@ -3,6 +3,7 @@ import Foundation
 public protocol ProfileViewPresenterProtocol {
     var view: ProfileViewControllerProtocol? { get set }
     var profileService: ProfileService? { get set }
+
     func viewDidLoad()
     func loadAvatar()
     func currentProfile() -> Profile?

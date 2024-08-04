@@ -22,13 +22,6 @@ final class ImagesListViewController: UIViewController & ImagesListViewControlle
     let photoNames: [String] = Array(0..<20).map{ "\($0)" }
 
     var shownPhotosCount = 0
-    
-    // move to TabBarController
-//    lazy var presenter: ImagesListViewPresenterProtocol? = {
-//        let imagesListService = ImagesListService.shared
-//        let imagesListPresenter = ImagesListViewPresenter(imagesListService: imagesListService)
-//        return imagesListPresenter
-//    }()
     var presenter: ImagesListViewPresenterProtocol?
     
     private let topInset: CGFloat = 12
@@ -58,6 +51,7 @@ final class ImagesListViewController: UIViewController & ImagesListViewControlle
         else {
             assertionFailure("Invalid segue destination")
             super.prepare(for: segue, sender: sender)
+
             return
         }
 

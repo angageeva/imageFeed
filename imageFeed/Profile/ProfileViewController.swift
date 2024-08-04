@@ -5,6 +5,7 @@ import Kingfisher
 
 public protocol ProfileViewControllerProtocol: AnyObject {
     var presenter: ProfileViewPresenterProtocol? { get set }
+
     func updateAvatar(imageURL: URL)
 }
 
@@ -19,11 +20,11 @@ final class ProfileViewController: UIViewController & ProfileViewControllerProto
     private let imageView = UIImageView()
     private let profileService = ProfileService.shared
     private let profileLogoutService = ProfileLogoutService.shared
-    
+
     private let nameLabel = UILabel()
     private let nickLabel = UILabel()
     private let descriptionLabel = UILabel()
-    
+
     private var profileImageServiceObserver: NSObjectProtocol?
     
     // MARK: - Lifecycle methods
@@ -41,7 +42,26 @@ final class ProfileViewController: UIViewController & ProfileViewControllerProto
         
         guard let profile = presenter?.currentProfile() else { return }
         updateProfileDetails(profile: profile)
-        
+    }
+    
+    // MARK: - Public methods
+    
+    func updateAvatar(imageURL: URL) {
+        let processor = RoundCornerImageProcessor(cornerRadius: 35)
+
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(with: imageURL,
+                              placeholder: UIImage(named: "placeholder.png"),
+                              options: [
+                                .processor(processor),
+                                       ]) { result in
+            switch result {
+            case .success(_):
+                break
+            case .failure(let error):
+                print("[ProfileViewController -> updateAvatar]: Error loading image: \(error)")
+            }
+        }
     }
     
     // MARK: - Private methods
@@ -130,22 +150,10 @@ final class ProfileViewController: UIViewController & ProfileViewControllerProto
         )
     }
     
-    func updateAvatar(imageURL: URL) {
-        let processor = RoundCornerImageProcessor(cornerRadius: 35)
-
-        imageView.kf.indicatorType = .activity
-        imageView.kf.setImage(with: imageURL,
-                              placeholder: UIImage(named: "placeholder.png"),
-                              options: [
-                                .processor(processor),
-                                       ]) { result in
-            switch result {
-            case .success(_):
-                break
-            case .failure(let error):
-                print("[ProfileViewController -> updateAvatar]: Error loading image: \(error)")
-            }
-        }
+    private func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name
+        descriptionLabel.text = profile.bio ?? ""
+        nickLabel.text = profile.loginName
     }
     
     @objc private func exitButtonHandler() {
@@ -167,11 +175,5 @@ final class ProfileViewController: UIViewController & ProfileViewControllerProto
         alert.addAction(UIAlertAction(title: "Нет", style: .cancel, handler: nil))
         
         present(alert, animated: true, completion: nil)
-    }
-    
-    private func updateProfileDetails(profile: Profile) {
-        nameLabel.text = profile.name
-        descriptionLabel.text = profile.bio ?? ""
-        nickLabel.text = profile.loginName
     }
 }

@@ -20,8 +20,6 @@ public class ProfileService {
         case noProfile
     }
     
-    private init() {}
-    
     static let shared = ProfileService()
     
     private let oAuthTokenStorage = OAuth2TokenStorage()
@@ -29,6 +27,8 @@ public class ProfileService {
     private var task: URLSessionTask?
     
     private(set) var profile: Profile?
+    
+    private init() {}
     
     // MARK: - Public methods
     

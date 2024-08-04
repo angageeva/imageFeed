@@ -10,6 +10,7 @@ protocol WebViewControllerDelegate: AnyObject {
 
 public protocol WebViewViewControllerProtocol: AnyObject {
     var presenter: WebViewPresenterProtocol? { get set }
+
     func load(request: URLRequest)
     func setProgressValue(_ newValue: Float)
     func setProgressHidden(_ isHidden: Bool)
@@ -26,8 +27,6 @@ final class WebViewController: UIViewController & WebViewViewControllerProtocol 
         return .darkContent
     }
     
-    //static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
-    
     private let unsplashOAuthNativeURL = "/oauth/authorize/native"
     private var estimatedProgressObservation: NSKeyValueObservation?
 
@@ -41,8 +40,7 @@ final class WebViewController: UIViewController & WebViewViewControllerProtocol 
         
         presenter?.viewDidLoad()
         webView.navigationDelegate = self
-        //updateProgress()
-        //а с этим теперь ваще что делать? О_о
+
         estimatedProgressObservation = webView.observe(
             \.estimatedProgress,
              options: [],
